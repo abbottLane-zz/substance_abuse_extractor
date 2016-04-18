@@ -1,0 +1,20 @@
+T1	MaritalStatus 45 52	Married
+E1	MaritalStatus:T1 State:T3 Type:T2
+T2	Type 45 52	Married
+T3	Status 45 52	Married
+A1	Value T3 current
+T4	Temporal 85 101	quit 5 years ago
+T5	History 106 132	after smoking for 15 years
+T6	Tobacco 71 77	Smoked
+E2	Tobacco:T6 Method:T7 Amount:T8 Frequency:T9 Time:T4 History:T5
+T7	Method 71 77	Smoked
+T8	Amount 78 83	1 PPD
+T9	Frequency 78 83	1 PPD
+T10	Alcohol 134 141	Alcohol
+E3	Alcohol:T10 Amount:T11
+T11	Amount 151 166	Drinks socially
+T12	Status 168 186	Denies any history
+A2	Value T12 none
+T13	Drug 190 194	drug
+E4	Drug:T13 Amount:T14 State:T12
+T14	Amount 195 200	abuse

@@ -1,0 +1,11 @@
+T1	Tobacco 166 172	smokes
+E1	Tobacco:T1 Method:T2 Type:T3 Amount:T4
+T2	Method 166 172	smokes
+T3	Type 173 183	cigarettes
+T4	Amount 184 197	quite heavily
+T5	Temporal 84 140	more than 10 years and he has been clean ever since then
+T6	History 14 71	He stopped using drugs when he was 25. He has got a lapse
+T7	Status 14 51	He stopped using drugs when he was 25
+A1	Value T7 past
+T8	Drug 31 36	drugs
+E2	Drug:T8 State:T7 History:T6 Time:T5

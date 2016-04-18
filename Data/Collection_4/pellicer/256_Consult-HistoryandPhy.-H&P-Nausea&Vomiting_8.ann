@@ -1,0 +1,14 @@
+T1	Tobacco 39 46	smoking
+E1	Tobacco:T1 History:T3 Method:T2
+T2	Method 39 46	smoking
+T3	History 26 54	27 pack year smoking history
+T4	Status 60 66	denies
+A1	Value T4 none
+T5	Alcohol 71 78	alcohol
+E2	Alcohol:T5 State:T4
+T6	Status 88 110	does have a history of
+A2	Value T6 past
+T7	Frequency 111 118	chronic
+T8	Drug 119 128	marijuana
+E3	Drug:T8 Type:T9 Frequency:T7 State:T6
+T9	Type 119 128	marijuana

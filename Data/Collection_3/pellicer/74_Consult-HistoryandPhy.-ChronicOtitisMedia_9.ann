@@ -1,0 +1,5 @@
+T1	EnvironmentalExposure 88 118	no secondhand tobacco exposure
+E1	EnvironmentalExposure:T1 Type:T3 State:T2
+T2	Status 88 90	no
+A1	Value T2 none
+T3	Type 91 118	secondhand tobacco exposure

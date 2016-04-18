@@ -1,0 +1,18 @@
+T1	MaritalStatus 33 39	single
+E1	MaritalStatus:T1 State:T2
+T2	Status 23 32	currently
+A1	Value T2 current
+T3	Alcohol 51 58	alcohol
+E2	Alcohol:T3 State:T5 Amount:T4 Frequency:T6 Method:T7
+T5	Status 44 50	drinks
+A2	Value T5 current
+T4	Amount 59 78	ten to twelve drink
+T6	Frequency 80 86	a week
+T7	Method 138 149	binge drink
+T8	Tobacco 154 160	smokes
+E3	Tobacco:T8 Method:T9 History:T10 State:T13 Time:T14
+T9	Method 154 160	smokes
+T13	Status 221 236	stopped smoking
+A3	Value T13 past
+T14	Temporal 237 259	for the past two weeks
+T10	History 161 199	one and a half pack a day for 15 years

@@ -1,0 +1,24 @@
+T1	MaritalStatus 31 38	married
+E1	MaritalStatus:T1 Type:T2 State:T3
+T2	Type 31 38	married
+T3	Status 28 30	is
+A1	Value T3 current
+T4	LivingSituation 43 73	lives at home with her husband
+E2	LivingSituation:T4 Method:T5
+T5	Method 43 73	lives at home with her husband
+T6	Family 66 73	husband
+E3	Family:T6 Type:T7
+T7	Type 66 73	husband
+T8	Status 147 159	quit in 1967
+A2	Value T8 past
+T9	Temporal 147 159	quit in 1967
+T10	Tobacco 96 103	smoking
+E4	Tobacco:T10 Method:T11 State:T8 Time:T9 History:T12
+T11	Method 96 103	smoking
+T12	History 85 134	history of smoking one pack per day for 18 years.
+T13	Alcohol 202 208	drinks
+E5	Alcohol:T13 Type:T14 Frequency:T15 Time:T17 Amount:T16
+T14	Type 209 213	wine
+T15	Frequency 214 222	everyday
+T16	Amount 254 280	one to two drinks per day.
+T17	Temporal 223 244	for the last 50 years

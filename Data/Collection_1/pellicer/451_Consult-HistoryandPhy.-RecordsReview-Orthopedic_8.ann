@@ -1,0 +1,12 @@
+T1	Amount 34 60	one half pack of cigarette
+T2	Type 51 60	cigarette
+T3	Frequency 73 81	per day.
+T4	Method 61 72	consumption
+T5	Tobacco 34 80	one half pack of cigarette consumption per day
+E1	Tobacco:T5 State:T6 Amount:T1 Type:T2 Method:T4 Frequency:T3
+T6	Status 25 33	admit to
+A1	Value T6 current
+T7	Status 85 91	denies
+A2	Value T7 none
+T8	Alcohol 96 116	alcohol consumption.
+E2	Alcohol:T8 State:T7

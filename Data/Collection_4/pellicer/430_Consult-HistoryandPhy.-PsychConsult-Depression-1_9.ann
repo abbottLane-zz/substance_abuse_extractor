@@ -1,0 +1,21 @@
+T1	Amount 73 91	one bottle of wine
+T2	Type 87 91	wine
+T3	Frequency 92 99	per day
+T4	Status 32 46	has been sober
+A1	Value T4 past
+T5	Temporal 41 61	sober for five years
+T6	Alcohol 41 46	sober
+E1	Alcohol:T6 State:T4 Time:T5 Amount:T1 Type:T2 Frequency:T3 History:T7
+T7	History 112 159	History of drinking for approximately 25 years.
+T8	Status 219 236	experimented with
+A2	Value T8 past
+T9	Drug 237 249	amphetamines
+E2	Drug:T9 Type:T12 State:T8 Time:T15
+T10	Drug 251 258	cocaine
+E3	Drug:T10 Type:T13 State:T8 Time:T15
+T11	Drug 260 269	marijuana
+E4	Drug:T11 Type:T14 State:T8 Time:T15
+T12	Type 237 249	amphetamines
+T13	Type 251 258	cocaine
+T14	Type 260 269	marijuana
+T15	Temporal 270 296	approximately 16 years ago

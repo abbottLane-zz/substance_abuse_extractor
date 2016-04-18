@@ -1,0 +1,22 @@
+T1	Status 123 131	does not
+A1	Value T1 none
+T2	Tobacco 132 137	smoke
+E1	Tobacco:T2 Method:T3 State:T1 History:T4
+T3	Method 132 137	smoke
+T4	History 16 118	She smoked cigarettes socially while in her 20s. A pack of cigarettes would last for more than a week.
+T5	Amount 151 170	two glasses of wine
+T6	Frequency 171 178	per day
+T7	Alcohol 151 178	two glasses of wine per day
+E2	Alcohol:T7 State:T8 Amount:T5 Frequency:T6
+T8	Status 143 150	She has
+A2	Value T8 current
+T9	MaritalStatus 212 219	married
+E3	MaritalStatus:T9 Type:T11 State:T10
+T10	Status 209 219	is married
+A3	Value T10 current
+T11	Type 212 219	married
+T12	Occupation 273 278	works
+E4	Occupation:T12 Type:T13 State:T14
+T13	Type 285 296	esthetician
+T14	Status 273 278	works
+A4	Value T14 current

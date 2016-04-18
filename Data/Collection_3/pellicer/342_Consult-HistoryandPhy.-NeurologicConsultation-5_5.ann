@@ -1,0 +1,17 @@
+T1	Status 135 174	He has not smoked for the past 27 years
+A1	Value T1 past
+T2	Tobacco 146 152	smoked
+E1	Tobacco:T2 Method:T3 State:T1 History:T4 Type:T5
+T3	Method 146 152	smoked
+T4	History 58 134	he smoked approximately two packs a day with combined cigarettes and cigars.
+T5	Type 112 133	cigarettes and cigars
+T6	Frequency 179 190	hardly ever
+T7	Alcohol 196 203	alcohol
+E2	Alcohol:T7 Frequency:T6 State:T11
+T8	Occupation 221 228	retired
+E3	Occupation:T8 Method:T9 State:T10
+T9	Method 221 228	retired
+T10	Status 211 220	currently
+A2	Value T10 current
+T11	Status 191 195	uses
+A3	Value T11 current

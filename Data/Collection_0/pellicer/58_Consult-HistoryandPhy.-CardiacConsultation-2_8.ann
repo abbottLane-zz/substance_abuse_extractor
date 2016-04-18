@@ -1,0 +1,8 @@
+T1	Tobacco 37 42	smoke
+E1	Tobacco:T1 State:T2 Method:T5
+T2	Status 28 36	does not
+A1	Value T2 none
+T3	Alcohol 46 61	take any drinks
+E2	Alcohol:T3 State:T2 Method:T4
+T4	Method 55 61	drinks
+T5	Method 37 42	smoke

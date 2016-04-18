@@ -1,0 +1,11 @@
+T1	Status 16 21	Still
+A1	Value T1 current
+T2	Tobacco 22 28	smokes
+E1	Tobacco:T2 Method:T3 State:T1 History:T4
+T3	Method 22 28	smokes
+T4	History 34 50	less than before
+T5	Alcohol 52 58	Drinks
+E2	Alcohol:T5 Amount:T7 State:T6
+T6	Status 52 58	Drinks
+A2	Value T6 current
+T7	Amount 59 68	socially.

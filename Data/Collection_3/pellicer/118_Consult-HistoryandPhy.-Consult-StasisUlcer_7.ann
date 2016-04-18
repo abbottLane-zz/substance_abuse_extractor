@@ -1,0 +1,13 @@
+T1	Amount 39 44	heavy
+T2	Alcohol 45 52	alcohol
+E1	Alcohol:T2 Amount:T1 State:T3 Time:T4
+T3	Status 62 73	in the past
+A1	Value T3 past
+T4	Temporal 75 97	quit several years ago
+T5	Status 112 118	former
+A2	Value T5 past
+T6	Type 119 128	cigarette
+T7	Tobacco 129 135	smoker
+E2	Tobacco:T7 State:T5 Type:T6 Method:T8 Time:T9
+T8	Method 129 135	smoker
+T9	Temporal 137 159	quit several years ago

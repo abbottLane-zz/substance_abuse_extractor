@@ -1,0 +1,4 @@
+T1	Status 74 76	no
+A1	Value T1 none
+T2	Alcohol 77 81	ETOH
+E1	Alcohol:T2 State:T1

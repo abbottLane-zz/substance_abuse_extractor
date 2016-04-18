@@ -1,0 +1,4 @@
+T1	Occupation 117 121	work
+E1	Occupation:T1 Method:T2 Time:T3
+T2	Method 104 121	No return to work
+T3	Temporal 135 146	(temporary)

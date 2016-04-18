@@ -1,0 +1,11 @@
+T1	Tobacco 33 40	smoking
+E1	Tobacco:T1 State:T2 Time:T3 Method:T4
+T2	Status 28 32	quit
+A1	Value T2 past
+T3	Temporal 41 53	20 years ago
+T4	Method 33 40	smoking
+T5	Alcohol 73 80	alcohol
+E2	Alcohol:T5 Method:T6 State:T7
+T6	Method 67 72	drink
+T7	Status 58 66	does not
+A2	Value T7 none

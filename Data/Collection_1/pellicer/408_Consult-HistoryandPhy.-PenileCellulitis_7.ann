@@ -1,0 +1,10 @@
+T1	LivingSituation 29 68	lives with both parents and no siblings
+E1	LivingSituation:T1 State:T2 Method:T3
+T2	Status 29 34	lives
+A1	Value T2 current
+T3	Method 29 68	lives with both parents and no siblings
+T4	Family 40 52	both parents
+E2	Family:T4 Amount:T6 Type:T5 Other:T7
+T5	Type 45 52	parents
+T6	Amount 40 44	both
+T7	Other 80 95	smokers at home

@@ -1,0 +1,15 @@
+T1	Status 21 31	used to be
+A1	Value T1 past
+T2	Tobacco 34 40	smoker
+E1	Tobacco:T2 Method:T3 State:T1
+T3	Method 34 40	smoker
+T4	Alcohol 59 65	drinks
+E2	Alcohol:T4 Amount:T5 Type:T6 Frequency:T7
+T5	Amount 66 88	2 to 3 glasses of wine
+T6	Type 84 88	wine
+T7	Frequency 89 97	per week
+T8	Occupation 103 113	is retired
+E3	Occupation:T8 State:T10 Method:T9
+T9	Method 106 114	retired.
+T10	Status 103 105	is
+A2	Value T10 current

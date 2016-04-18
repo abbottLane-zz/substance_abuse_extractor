@@ -1,0 +1,13 @@
+T1	Status 31 39	does not
+A1	Value T1 none
+T2	Tobacco 40 45	smoke
+E1	Tobacco:T2 Method:T3 Type:T4 State:T1
+T3	Method 40 45	smoke
+T4	Type 46 56	cigarettes
+T5	Alcohol 60 73	drink alcohol
+E2	Alcohol:T5 State:T1
+T6	Residence 79 102	lives in a nursing home
+E3	Residence:T6 Type:T7 State:T8
+T7	Type 85 102	in a nursing home
+T8	Status 79 84	lives
+A2	Value T8 current

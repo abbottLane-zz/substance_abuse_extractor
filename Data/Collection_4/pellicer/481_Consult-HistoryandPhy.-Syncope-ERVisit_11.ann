@@ -1,0 +1,13 @@
+T1	Status 17 27	History of
+A1	Value T1 past
+T2	Tobacco 28 35	tobacco
+E1	Tobacco:T2 State:T1 History:T4 Time:T3 Method:T5
+T3	Temporal 66 83	quit 30 years ago
+T4	History 41 60	smoked for 20 years
+T5	Method 41 46	smoke
+T6	Alcohol 85 92	Alcohol
+E2	Alcohol:T6 Amount:T7 Frequency:T8 State:T9
+T7	Amount 93 110	one to two drinks
+T8	Frequency 111 118	monthly
+T9	Status 111 119	monthly.
+A2	Value T9 current

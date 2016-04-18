@@ -1,0 +1,6 @@
+T1	Tobacco 40 47	tobacco
+E1	Tobacco:T1 State:T4 Type:T3 Amount:T2
+T2	Amount 22 27	minor
+T3	Type 28 39	second-hand
+T4	Status 40 47	tobacco
+A1	Value T4 current

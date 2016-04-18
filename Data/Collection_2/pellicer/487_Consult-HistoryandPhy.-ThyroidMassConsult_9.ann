@@ -1,0 +1,6 @@
+T1	LivingSituation 67 95	lives with her mom in Fresno
+E1	LivingSituation:T1 Method:T2
+T2	Method 67 95	lives with her mom in Fresno
+T3	Family 82 85	mom
+E2	Family:T3 Type:T4
+T4	Type 82 85	mom

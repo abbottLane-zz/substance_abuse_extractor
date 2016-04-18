@@ -1,0 +1,24 @@
+T1	LivingSituation 28 39	lives alone
+E1	LivingSituation:T1 State:T3 Method:T2
+T2	Method 28 39	lives alone
+T3	Status 28 33	lives
+A1	Value T3 current
+T4	Residence 28 55	lives alone in an apartment
+E2	Residence:T4 Type:T5 State:T3
+T5	Type 46 55	apartment
+T6	History 97 116	was a binge drinker
+T7	Status 70 78	sobriety
+A2	Value T7 past
+T8	Temporal 70 92	sobriety 15 months ago
+T9	Alcohol 70 78	sobriety
+E3	Alcohol:T9 State:T7 Time:T8 History:T6
+T10	Occupation 191 204	does not work
+E4	Occupation:T10 State:T11 Time:T14 Method:T16
+T11	Status 191 199	does not
+A3	Value T11 past
+T12	Family 211 218	brother
+E5	Family:T12 Type:T13 LivingStatus:T15 Time:T14
+T13	Type 211 218	brother
+T14	Temporal 230 242	3 months ago
+T15	LivingStatus 219 229	became ill
+T16	Method 251 279	quit his job to care for him

@@ -1,0 +1,11 @@
+T1	Status 355 362	did not
+A1	Value T1 none
+T2	Tobacco 363 368	smoke
+E1	Tobacco:T2 Method:T3 State:T1 Time:T7
+T3	Method 363 368	smoke
+T4	Alcohol 370 383	drink alcohol
+E2	Alcohol:T4 State:T1 Time:T7
+T5	Type 392 399	illicit
+T6	Drug 400 405	drugs
+E3	Drug:T6 Type:T5 State:T1 Time:T7
+T7	Temporal 406 423	during pregnancy.

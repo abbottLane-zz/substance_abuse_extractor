@@ -1,0 +1,11 @@
+T1	PhysicalActivity 183 187	walk
+E1	PhysicalActivity:T1 State:T5 Type:T2 Frequency:T3 Amount:T4
+T2	Type 183 187	walk
+T3	Frequency 188 201	every evening
+T4	Amount 202 215	for one hour.
+T5	Status 183 187	walk
+A1	Value T5 current
+T6	Family 90 97	husband
+E2	Family:T6 Type:T7 Other:T8
+T7	Type 90 97	husband
+T8	Other 98 125	hurt his hand and shoulder,

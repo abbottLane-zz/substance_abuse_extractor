@@ -1,0 +1,14 @@
+T1	Tobacco 32 38	smoked
+E1	Tobacco:T1 Method:T2 Amount:T3 Frequency:T4 Time:T5 History:T6 State:T8
+T2	Method 32 38	smoked
+T3	Amount 39 53	2 to 3 packets
+T4	Frequency 54 61	per day
+T5	Temporal 66 88	at least last 10 years
+T6	History 93 132	quit smoking roughly about 20 years ago
+T7	Alcohol 145 152	alcohol
+E2	Alcohol:T7 State:T9 Frequency:T10
+T8	Status 32 38	smoked
+A1	Value T8 current
+T9	Status 153 156	use
+A2	Value T9 current
+T10	Frequency 134 144	Occasional

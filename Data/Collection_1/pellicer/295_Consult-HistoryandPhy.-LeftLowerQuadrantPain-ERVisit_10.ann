@@ -1,0 +1,16 @@
+T1	Tobacco 24 31	tobacco
+E1	Tobacco:T1 State:T3
+T2	Alcohol 36 43	alcohol
+E2	Alcohol:T2 State:T3
+T3	Status 17 23	Denies
+A1	Value T3 none
+T4	Drug 62 71	marijuana
+E3	Drug:T4 Type:T7 State:T8
+T5	Drug 93 100	cocaine
+E4	Drug:T5 Type:T6 State:T9
+T6	Type 93 100	cocaine
+T7	Type 62 71	marijuana
+T8	Status 72 75	use
+A2	Value T8 current
+T9	Status 105 119	five years ago
+A3	Value T9 past

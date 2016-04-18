@@ -1,0 +1,14 @@
+T1	Tobacco 40 46	smoker
+E1	Tobacco:T1 Time:T3 Method:T2 History:T4 State:T5 Frequency:T7 Amount:T6
+T2	Method 40 46	smoker
+T3	Temporal 47 67	since the age of 10.
+T4	History 72 104	he was smoking 2-3 packs per day
+T5	Status 149 167	has cut it down to
+A1	Value T5 current
+T6	Amount 168 179	half a pack
+T7	Frequency 180 187	per day
+T8	Status 192 200	does not
+A2	Value T8 none
+T9	Amount 201 206	abuse
+T10	Alcohol 207 215	alcohol.
+E2	Alcohol:T10 Amount:T9 State:T8

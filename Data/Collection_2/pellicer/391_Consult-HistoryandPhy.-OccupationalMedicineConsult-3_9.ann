@@ -1,0 +1,12 @@
+T1	Status 28 34	denies
+A1	Value T1 none
+T2	Alcohol 35 54	alcohol consumption
+E1	Alcohol:T2 State:T1
+T3	Status 59 63	does
+A2	Value T3 current
+T4	Tobacco 64 69	smoke
+E2	Tobacco:T4 State:T3 Method:T5 Amount:T6 Type:T7 Frequency:T8
+T5	Method 64 69	smoke
+T6	Amount 84 118	one and a half packs of cigarettes
+T7	Type 108 118	cigarettes
+T8	Frequency 119 126	per day

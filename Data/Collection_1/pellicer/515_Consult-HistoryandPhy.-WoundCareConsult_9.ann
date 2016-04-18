@@ -1,0 +1,15 @@
+T1	LivingSituation 48 59	lived alone
+E1	LivingSituation:T1 Method:T2 State:T3
+T2	Method 48 59	lived alone
+T3	Status 16 34	Prior to admission
+A1	Value T3 current
+T4	Residence 60 85	in a one storied dwelling
+E2	Residence:T4 Type:T5 State:T3
+T5	Type 65 85	one storied dwelling
+T6	Status 259 282	quit about 10 years ago
+A2	Value T6 past
+T8	Method 248 253	smoke
+T10	Temporal 270 282	10 years ago
+T11	History 288 332	smoked 1 to 2 packs a day from age 18 to 54.
+T7	Tobacco 248 283	smoke, but quit about 10 years ago.
+E3	Tobacco:T7 Method:T8 State:T6 Time:T10 History:T11

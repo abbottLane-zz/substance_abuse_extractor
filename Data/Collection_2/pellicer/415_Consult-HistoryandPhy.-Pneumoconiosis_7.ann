@@ -1,0 +1,5 @@
+T1	Status 29 48	had been previously
+A1	Value T1 past
+T2	Tobacco 51 58	smoker.
+E1	Tobacco:T2 Method:T3 State:T1
+T3	Method 51 57	smoker

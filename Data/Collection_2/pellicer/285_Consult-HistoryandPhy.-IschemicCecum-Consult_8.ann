@@ -1,0 +1,12 @@
+T1	Status 63 67	quit
+A1	Value T1 past
+T2	Tobacco 51 58	smoking
+E1	Tobacco:T2 Method:T3 History:T4 State:T1 Time:T5
+T3	Method 51 57	smokin
+T4	History 35 58	long history of smoking
+T5	Temporal 63 82	quit many years ago
+T6	Alcohol 105 112	alcohol
+E2	Alcohol:T6 Frequency:T8 State:T7
+T7	Status 92 104	have chronic
+A2	Value T7 current
+T8	Frequency 97 104	chronic
