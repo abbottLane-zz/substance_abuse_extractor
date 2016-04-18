@@ -1,7 +1,7 @@
 from DataLoader.DataLoader import DataLoader
 
 
-data = DataLoader("/home/wlane/PycharmProjects/substance_abuse_extractor/Data")
+data = DataLoader("..Data")
 documents = data.get_file_list()
 
 tmp = 9
