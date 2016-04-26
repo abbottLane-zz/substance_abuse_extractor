@@ -1,5 +1,6 @@
 from DataModels.Entity import Entity
-from DataModels.Attrib import Attrib
+from DataModels.TAttrib import TAttrib
+from DataModels.AAttrib import AAttrib
 
 class AnnotationDoc:
     def __init__(self, id, list_of_annotations):
@@ -58,4 +59,18 @@ class AnnotationDoc:
         for index, item in enumerate(real_attrib[4:], start=4):
             real_text = real_text + " " + item
 
-        return Attrib(real_tag, real_type, real_span_begin, real_span_end, real_text.lstrip())
+        #check for the presence of an A attribute. There will not always be one
+        for val in attrib_dict.keys():
+            if 'A' in val:
+                if attrib_dict[val][2] == real_tag:
+                    return TAttrib(real_tag, real_type, real_span_begin, real_span_end, real_text.lstrip(), self.make_a_type_attrib(attrib_dict[val]))
+        return TAttrib(real_tag, real_type, real_span_begin, real_span_end, real_text.lstrip(), None)
+
+    def make_a_type_attrib(self, a_type_tuple):
+        tag = a_type_tuple[0]
+        pointer = a_type_tuple[2]
+        status = a_type_tuple[3]
+
+        return AAttrib(tag, pointer, status)
+
+

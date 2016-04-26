@@ -13,7 +13,7 @@ data = DataLoader("../Data")
 
 # create dictionaries of {documentId : DocumentObject}
 documents = data.get_file_dictionary()
-annotations = data.get_annotations_dictionary() #TODO: make sure annotations are being properly build into objects in annotation constructor
+annotations = data.get_annotations_dictionary() #TODO: make sure sentences are being properly build into objects
 
 # merge annotations data into the documents
 for key in documents.keys():
@@ -21,7 +21,9 @@ for key in documents.keys():
     annotation = annotations[key]
     document.set_annotation(annotation)
 
-test=0
+# Data Loader pipeline output
+training_doc_objs = documents
+
 ##########################################
 #### SENTENCE TRAINING PIPELINE #########
 ########################################
