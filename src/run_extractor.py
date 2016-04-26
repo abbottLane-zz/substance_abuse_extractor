@@ -12,8 +12,8 @@ from DataLoader.Document import  Document
 data = DataLoader("../Data")
 
 # create dictionaries of {documentId : DocumentObject}
-documents = data.get_file_dictionary()
-annotations = data.get_annotations_dictionary() #TODO: make sure sentences are being properly build into objects
+documents = data.get_file_dictionary() #TODO: make sure sentences are being properly build into objects
+annotations = data.get_annotations_dictionary()
 
 # merge annotations data into the documents
 for key in documents.keys():
