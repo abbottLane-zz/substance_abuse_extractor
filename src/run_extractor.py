@@ -21,7 +21,7 @@ for key in documents.keys():
     annotation = annotations[key]
     document.set_annotation(annotation)
 
-
+test=0
 ##########################################
 #### SENTENCE TRAINING PIPELINE #########
 ########################################
