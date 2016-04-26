@@ -18,8 +18,13 @@ class Document:
 
     def rebuild_original_text(self):
         full_doc =""
+        iter_count =0
         for sent in self.sentences_text_list:
-            full_doc = full_doc + " " + sent
+            if iter_count !=0:
+                full_doc = full_doc + " " + sent
+            else:
+                full_doc = full_doc + sent
+            iter_count = iter_count +1
         return full_doc
 
     def sent_segmentizer(self, sents):
