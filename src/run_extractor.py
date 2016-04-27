@@ -21,6 +21,14 @@ for key in training_documents.keys():
     annotation = annotations[key]
     document.set_annotation(annotation)
 
+## TESTING ###
+for key in training_documents.keys():
+    print(training_documents[key].get_id())
+    for sentence in training_documents[key].get_sentence_obj_list():
+        print("\t" + sentence.sentence + "\tENTITY:\t" + str(sentence.has_entity()))
+
+
+
 # Data Loader pipeline output
 training_doc_objs = training_documents
 

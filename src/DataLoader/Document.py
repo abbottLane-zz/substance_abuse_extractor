@@ -14,10 +14,11 @@ class Document:
         sent_objs = list()
         current_length = 0
         for sentence in sentences_text_list:
-            start_idx = current_length
-            end_idx = current_length + len(sentence)
-            sent_objs.append(Sentence(sentence, start_idx, end_idx))
-            current_length = current_length + end_idx
+            if sentence != "\n":
+                start_idx = current_length
+                end_idx = current_length + len(sentence)
+                sent_objs.append(Sentence(sentence, start_idx, end_idx))
+                current_length = current_length + end_idx
         # Annotations have to be added to sentence objs. Use the set_annotations method below to do that
         return sent_objs
 
@@ -55,3 +56,5 @@ class Document:
         return self.sentences_text_list
     def get_original_text(self):
         return self.original_text
+    def get_sentence_obj_list(self):
+        return self.sentence_obj_list

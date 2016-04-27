@@ -8,3 +8,8 @@ class Sentence:
     def add_entity(self, entity):
         self.list_entities.append(entity)
         pass
+
+    def has_entity(self):
+        if len(self.list_entities) ==0:
+            return False
+        return True
