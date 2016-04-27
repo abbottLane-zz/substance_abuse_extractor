@@ -9,20 +9,20 @@ from DataLoader.Document import  Document
 #### DATA LOADER PIPELINE #########
 ##################################
 # Load data from txt files into memory
-data = DataLoader("../Data")
+training_data = DataLoader("../Data")
 
 # create dictionaries of {documentId : DocumentObject}
-documents = data.get_file_dictionary() #TODO: make sure sentences are being properly build into objects
-annotations = data.get_annotations_dictionary()
+training_documents = training_data.get_file_dictionary() #TODO: make sure sentences are being properly build into objects
+annotations = training_data.get_annotations_dictionary()
 
 # merge annotations data into the documents
-for key in documents.keys():
-    document = documents[key]
+for key in training_documents.keys():
+    document = training_documents[key]
     annotation = annotations[key]
     document.set_annotation(annotation)
 
 # Data Loader pipeline output
-training_doc_objs = documents
+training_doc_objs = training_documents
 
 ##########################################
 #### SENTENCE TRAINING PIPELINE #########

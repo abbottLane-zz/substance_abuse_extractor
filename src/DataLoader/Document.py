@@ -1,4 +1,5 @@
 from nltk.tokenize import sent_tokenize
+from DataModels.Sentence import Sentence
 
 
 class Document:
@@ -10,11 +11,25 @@ class Document:
         self.sentence_obj_list = self.create_sentence_objs(self.sentences_text_list)
 
     def create_sentence_objs(self, sentences_text_list):
-
-        pass
+        sent_objs = list()
+        current_length = 0
+        for sentence in sentences_text_list:
+            start_idx = current_length
+            end_idx = current_length + len(sentence)
+            sent_objs.append(Sentence(sentence, start_idx, end_idx))
+            current_length = current_length + end_idx
+        # Annotations have to be added to sentence objs. Use the set_annotations method below to do that
+        return sent_objs
 
     def set_annotation(self, annotations):
         self.annotations = annotations
+        #match entity spans to their sentences
+        entities = self.annotations.get_entities_as_list()
+        for entity in entities:
+            for sent in self.sentence_obj_list:
+                if int(entity.get_entity_sample_idx()) > int(sent.begin_idx) and int(entity.get_entity_sample_idx()) < int(sent.end_idx):
+                    sent.add_entity(entity)
+                    break
 
     def rebuild_original_text(self):
         full_doc =""

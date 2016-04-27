@@ -27,9 +27,6 @@ class DataLoader:
                     annotations = AnnotationDoc(id, content)
                     self.ann_dict[id]= annotations
 
-
-
-
     def get_file_dictionary(self):
         return self.doc_dict
     def get_annotations_dictionary(self):
