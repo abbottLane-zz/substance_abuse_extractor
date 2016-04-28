@@ -12,7 +12,7 @@ from DataLoader.Document import  Document
 training_data = DataLoader("../Data")
 
 # create dictionaries of {documentId : DocumentObject}
-training_documents = training_data.get_file_dictionary() #TODO: make sure sentences are being properly build into objects
+training_documents = training_data.get_file_dictionary()
 annotations = training_data.get_annotations_dictionary()
 
 # merge annotations data into the documents
