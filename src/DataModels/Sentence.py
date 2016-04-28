@@ -13,3 +13,10 @@ class Sentence:
         if len(self.list_entities) ==0:
             return False
         return True
+
+    def has_substance_abuse_entity(self):
+        substance_abuse_entity_types = {"Alcohol", "Tobacco", "Drug"}
+        for entity in self.list_entities:
+            if entity.type in substance_abuse_entity_types:
+                return True
+        return False

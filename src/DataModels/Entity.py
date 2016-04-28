@@ -1,7 +1,8 @@
 class Entity:
-    def __init__(self, tag, dict_of_attribs):
+    def __init__(self, tag, dict_of_attribs, type):
         self.tag = tag
         self.dict_of_attribs = dict_of_attribs
+        self.type = type
 
     def get_entity_begin_idxs(self):
         idxs = list()

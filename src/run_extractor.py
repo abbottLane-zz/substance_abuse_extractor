@@ -25,7 +25,7 @@ for key in training_documents.keys():
 for key in training_documents.keys():
     print(training_documents[key].get_id())
     for sentence in training_documents[key].get_sentence_obj_list():
-        print("\t" + sentence.sentence + "\tENTITY:\t" + str(sentence.has_entity()))
+        print("\t" + sentence.sentence + "\tSUBS_ABUSE_ENTITY:\t" + str(sentence.has_substance_abuse_entity()))
 
 
 

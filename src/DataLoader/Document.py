@@ -33,8 +33,8 @@ class Document:
                 if entity_assigned == True:
                     entity_assigned=False
                     break
-                if sent.sentence == "SOCIAL HISTORY: The patient is married and lives at home with her husband.":
-                    tmp=0
+                # if sent.sentence == "SOCIAL HISTORY: The patient is married and lives at home with her husband.":
+                #     tmp=0
 
                 begin_indexes_of_sent_entities = entity.get_entity_begin_idxs()
                 for idx in begin_indexes_of_sent_entities:
