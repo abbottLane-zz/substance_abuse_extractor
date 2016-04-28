@@ -1,20 +1,9 @@
 class FeatureExtractor:
-    def __init__(self, documents, annotation_documents):
-        self.documents= documents
-        self.annotation_documents = annotation_documents
-        self.feature_vector = list()
+    def __init__(self, document_objects):
+        self.documents= document_objects
 
         # Feature Extraction Pipeline:
-        #   For each document:
-        #       extract the gold standard label
-        #       process the raw data here to automatically extract features and put them in the feature_vector list
-        for key in documents.keys():
-
-
-
-            self.feature_vector.append("")
-
-
-
-
-        pass
+        for key in self.documents:
+            print(self.documents[key].get_id())
+            for sentence in self.documents[key].get_sentence_obj_list():
+                print("\t" + sentence.sentence + "\tSUBSTANCE_ENTITY:\t" + str(sentence.has_substance_abuse_entity()))
