@@ -12,13 +12,14 @@ class Document:
 
     def create_sentence_objs(self, sentences_text_list):
         sent_objs = list()
-        current_length = 0
+        current_length = 1
         for sentence in sentences_text_list:
             if sentence != "\n":
+                sentence = sentence.rstrip()
                 start_idx = current_length
                 end_idx = current_length + len(sentence)
                 sent_objs.append(Sentence(sentence, start_idx, end_idx))
-                current_length = current_length + end_idx
+            current_length = end_idx
         # Annotations have to be added to sentence objs. Use the set_annotations method below to do that
         return sent_objs
 
@@ -27,10 +28,21 @@ class Document:
         #match entity spans to their sentences
         entities = self.annotations.get_entities_as_list()
         for entity in entities:
+            entity_assigned = False
             for sent in self.sentence_obj_list:
-                if int(entity.get_entity_sample_idx()) > int(sent.begin_idx) and int(entity.get_entity_sample_idx()) < int(sent.end_idx):
-                    sent.add_entity(entity)
+                if entity_assigned == True:
+                    entity_assigned=False
                     break
+                if sent.sentence == "SOCIAL HISTORY: The patient is married and lives at home with her husband.":
+                    tmp=0
+
+                begin_indexes_of_sent_entities = entity.get_entity_begin_idxs()
+                for idx in begin_indexes_of_sent_entities:
+                    if int(idx) > int(sent.begin_idx) and int(idx) < int(sent.end_idx):
+                        sent.add_entity(entity)
+                        entity_assigned = True
+                        #print(sent.sentence + " was assigned: " + entity.tag)
+                        break
 
     def rebuild_original_text(self):
         full_doc =""

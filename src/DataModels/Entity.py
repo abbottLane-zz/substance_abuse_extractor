@@ -3,7 +3,8 @@ class Entity:
         self.tag = tag
         self.dict_of_attribs = dict_of_attribs
 
-    def get_entity_sample_idx(self):
+    def get_entity_begin_idxs(self):
+        idxs = list()
         for attrib_key in self.dict_of_attribs:
-            return self.dict_of_attribs[attrib_key].span_begin
-        return None
+            idxs.append(self.dict_of_attribs[attrib_key].span_begin)
+        return idxs
