@@ -4,10 +4,8 @@ from sklearn.feature_extraction import DictVectorizer
 import re
 import string
 
-has_substance = "has_subs_info"
-no_substance = "no_subs_info"
-has_subs_weight = 1
-no_subs_weight = 0.02
+HAS_SUBSTANCE = "has_subs_info"
+NO_SUBSTANCE = "no_subs_info"
 
 
 def train_model(feature_extractor):
@@ -22,9 +20,9 @@ def train_model(feature_extractor):
         none_sent = "Patient likes $3.25 baseball"
         fat = "Boy is this patient 3.2% fat"
         all_sent = "Patient is 100% a 1.3 non-smoker"
-        sucker = "Patient smokes 8 packs a day"
+        sucker = "Patient 'smokes' 8 packs a day"
         test_sents = [none_sent, fat, all_sent, sucker]
-        __test_model(classifier, feature_map, test_sents)
+        #__test_model(classifier, feature_map, test_sents)
 
         return classifier, feature_map
 
@@ -48,9 +46,9 @@ def __vectorize_data(feature_extractor):
 
             # Track gold labels
             if sent_obj.has_substance_abuse_entity():
-                labels.append(has_substance)
+                labels.append(HAS_SUBSTANCE)
             else:
-                labels.append(no_substance)
+                labels.append(NO_SUBSTANCE)
 
     # convert to vectors
     dict_vec = DictVectorizer()
@@ -79,6 +77,7 @@ def __process_sentence(sentence):
     NUMBER = "NUMBER"
     DECIMAL = "DECIMAL"
     MONEY = "MONEY"
+    PERCENT = "PERCENT"
 
     # TODO -- remove 'SOCIAL HISTORY:' and variants
 
@@ -86,22 +85,30 @@ def __process_sentence(sentence):
     grams = sentence.split()
     processed_grams = []
 
+    left_omitted_chars = "|".join(["\$", "\."])
+    right_omitted_chars = "|".join(["%"])
+    ending_punc = re.sub(right_omitted_chars, "", string.punctuation)
+    starting_punc = re.sub(left_omitted_chars, "", string.punctuation)
+
     for gram in grams:
-        # Word final punctuation
-        gram = gram.rstrip(string.punctuation)
-        # TODO -- percent signs
+        # Remove punctuation
+        gram = gram.rstrip(ending_punc)
+        gram = gram.lstrip(starting_punc)
 
         # TODO -- prune unuseful words
 
-        # Compress into word classes
-        if gram.isdigit():
-            processed_grams.append(NUMBER)
-        elif gram.isdecimal():
-            processed_grams.append(DECIMAL)
-        elif gram and gram[0] == '$':
-            processed_grams.append(MONEY)
-        else:
-            processed_grams.append(gram)
+        if gram:
+            # Compress into word classes
+            if gram.isdigit():
+                processed_grams.append(NUMBER)
+            elif re.sub("\.", "", gram).isdigit():
+                processed_grams.append(DECIMAL)
+            elif gram[0] == '$':
+                processed_grams.append(MONEY)
+            elif gram[len(gram)-1] == '%':
+                processed_grams.append(PERCENT)
+            else:
+                processed_grams.append(gram)
 
     return processed_grams
 
@@ -114,4 +121,4 @@ def __test_model(classifier, feature_map, test_sents):
     test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
 
     predictions = classifier.predict(test_array)
-    #print(predictions)
+    print(predictions)
