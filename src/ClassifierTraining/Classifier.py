@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.svm import LinearSVC
 from sklearn.feature_extraction import DictVectorizer
+import re
+import string
 
 has_substance = "has_subs_info"
 no_substance = "no_subs_info"
@@ -16,7 +18,13 @@ def train_model(feature_extractor):
         classifier = LinearSVC()
         classifier.fit(sent_vectors, labels)
 
-        __test_model(classifier, feature_map)
+        # Test sentences
+        none_sent = "Patient likes $3.25 baseball"
+        fat = "Boy is this patient 3.2% fat"
+        all_sent = "Patient is 100% a 1.3 non-smoker"
+        sucker = "Patient smokes 8 packs a day"
+        test_sents = [none_sent, fat, all_sent, sucker]
+        __test_model(classifier, feature_map, test_sents)
 
         return classifier, feature_map
 
@@ -68,26 +76,42 @@ def vectorize_test_sent(sentence, feature_map):
 
 
 def __process_sentence(sentence):
+    NUMBER = "NUMBER"
+    DECIMAL = "DECIMAL"
+    MONEY = "MONEY"
+
+    # TODO -- remove 'SOCIAL HISTORY:' and variants
+
+    sentence = sentence.lower()
     grams = sentence.split()
-    # TODO -- Tokenize
-    # TODO -- prune unuseful words
-    processed_grams = grams
+    processed_grams = []
+
+    for gram in grams:
+        # Word final punctuation
+        gram = gram.rstrip(string.punctuation)
+        # TODO -- percent signs
+
+        # TODO -- prune unuseful words
+
+        # Compress into word classes
+        if gram.isdigit():
+            processed_grams.append(NUMBER)
+        elif gram.isdecimal():
+            processed_grams.append(DECIMAL)
+        elif gram and gram[0] == '$':
+            processed_grams.append(MONEY)
+        else:
+            processed_grams.append(gram)
+
     return processed_grams
 
 
-def __test_model(classifier, feature_map):
+def __test_model(classifier, feature_map, test_sents):
+    number_of_sentences = len(test_sents)
     number_of_features = len(feature_map)
 
-    # Set test sentences
-    none_sent = "Patient likes baseball"
-    fat = "Boy is this patient fat"
-    all_sent = "Patient is a non-smoker."
-    sucker = "Patient smokes a pack a day"
-    test_sents = [none_sent, fat, all_sent, sucker]
-
-    # Tes
     test_vectors = [vectorize_test_sent(sent, feature_map) for sent in test_sents]
-    test_array = np.reshape(test_vectors, (len(test_vectors), number_of_features))
+    test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
 
-    whatami = classifier.predict(test_array)
-    #print(whatami)
+    predictions = classifier.predict(test_array)
+    print(predictions)
