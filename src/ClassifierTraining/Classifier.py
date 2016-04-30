@@ -83,11 +83,12 @@ def __test_model(classifier, feature_map):
     fat = "Boy is this patient fat"
     all_sent = "Patient is a non-smoker."
     sucker = "Patient smokes a pack a day"
-    test_sents = [none_sent, fat, all_sent, sucker]
+    test1 = "she has a problem with smokey the bear and his illicit rugs"
+    test_sents = [none_sent, fat, all_sent, sucker,test1]
 
     # Tes
     test_vectors = [vectorize_test_sent(sent, feature_map) for sent in test_sents]
     test_array = np.reshape(test_vectors, (len(test_vectors), number_of_features))
 
     whatami = classifier.predict(test_array)
-    #print(whatami)
+    print(whatami)

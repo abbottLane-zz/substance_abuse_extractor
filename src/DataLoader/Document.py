@@ -30,18 +30,18 @@ class Document:
         for entity in entities:
             entity_assigned = False
             for sent in self.sentence_obj_list:
-                if entity_assigned == True:
-                    entity_assigned=False
-                    break
-                # if sent.sentence == "SOCIAL HISTORY: The patient is married and lives at home with her husband.":
-                #     tmp=0
+                # if entity_assigned == True:
+                #     entity_assigned=False
+                #     break
+                if sent.sentence == "FAMILY HISTORY AND SOCIAL HISTORY: Significant for Huntington disease in her mother and diabetes in her father.":
+                    tmp=0
 
                 begin_indexes_of_sent_entities = entity.get_entity_begin_idxs()
                 for idx in begin_indexes_of_sent_entities:
                     if int(idx) > int(sent.begin_idx) and int(idx) < int(sent.end_idx):
                         sent.add_entity(entity)
                         entity_assigned = True
-                        #print(sent.sentence + " was assigned: " + entity.tag)
+                        #print(sent.sentence + " was assigned: " + entity.tag + " " + entity.type)
                         break
 
     def rebuild_original_text(self):

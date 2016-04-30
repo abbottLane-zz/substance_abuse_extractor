@@ -2,7 +2,7 @@ class FeatureExtractor:
     def __init__(self, document_objects):
         self.documents= document_objects
 
-        # Feature Extraction Pipeline:
+        # Feature Extractor test print statements:
         for key in self.documents:
             print(self.documents[key].get_id())
             for sentence in self.documents[key].get_sentence_obj_list():
