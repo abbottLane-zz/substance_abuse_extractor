@@ -90,4 +90,4 @@ def __test_model(classifier, feature_map):
     test_array = np.reshape(test_vectors, (len(test_vectors), number_of_features))
 
     whatami = classifier.predict(test_array)
-    print(whatami)
+    #print(whatami)
