@@ -3,6 +3,7 @@ from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from DataLoader.DataLoader import DataLoader
 from DataLoader.AnnotationDoc import AnnotationDoc
 from DataLoader.Document import  Document
+from ClassifierTraining import Classifier
 
 
 ####################################
@@ -29,3 +30,4 @@ training_doc_objs = training_documents
 ########################################
 
 feature_extractor = FeatureExtractor(training_doc_objs)
+classifier, feature_map = Classifier.train_model(feature_extractor)
