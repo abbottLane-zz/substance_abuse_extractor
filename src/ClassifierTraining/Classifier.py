@@ -114,4 +114,4 @@ def __test_model(classifier, feature_map, test_sents):
     test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
 
     predictions = classifier.predict(test_array)
-    print(predictions)
+    #print(predictions)
