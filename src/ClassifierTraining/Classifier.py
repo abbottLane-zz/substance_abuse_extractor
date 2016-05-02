@@ -10,7 +10,7 @@ NO_SUBSTANCE = "no_subs_info"
 
 def train_model(feature_extractor):
         # Convert Data to vectors
-        sents, labels = __sentences_and_labels(feature_extractor)
+        orig_sents, sents, labels = __sentences_and_labels(feature_extractor)
         sent_vectors, labels, feature_map = __vectorize_data(sents, labels)
 
         # Create Model
@@ -23,28 +23,40 @@ def train_model(feature_extractor):
 def classify_sentences(classifier, feature_map, feat_extractor):
 
     # Get data
-    #sents, labels = __sentences_and_labels(feat_extractor)
+    # orig_sents, proc_sents, labels = __sentences_and_labels(feat_extractor)
 
-    # Test sentences
+    # Temporary test sentences
     # TODO -- replace temp sents with real sents
     none_sent = "Patient \likes $3.25 baseball"
     fat = "Boy is this /patient 3.2% fat"
-    all_sent = "Patient is 100% a 1.3 non-smoker"
-    sucker = "Patient 'smokes' 8 packs a day"
+    all_sent = 'Patient is "100% a 1.3 non-smoker"'
+    sucker = "Patient 'smokes', 8 packs*&& a day."
     test_sents = [none_sent, fat, all_sent, sucker]
+    print("\nTest sentences:\n\t" + str(test_sents))
 
     number_of_sentences = len(test_sents)
     number_of_features = len(feature_map)
 
-    test_vectors = [__vectorize_test_sent(sent, feature_map) for sent in test_sents]
+    # Vectorize sentences and classify
+    proc_sents = [" ".join(__process_sentence(sent)) for sent in test_sents]
+    test_vectors = [__vectorize_test_sent(sent, feature_map) for sent in proc_sents]
     test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
-    predictions = classifier.predict(test_array)
+    classifications = classifier.predict(test_array)
 
-    return predictions
+    # Grab sents with substance info
+    orig_sents_w_info = []
+    proc_sents_w_info = []
+    for orig_sent, proc_sent, classification in zip(test_sents, proc_sents, classifications):
+        if classification == HAS_SUBSTANCE:
+            orig_sents_w_info.append(orig_sent)
+            proc_sents_w_info.append(proc_sent)
+
+    return orig_sents_w_info, proc_sents_w_info
 
 
 def __sentences_and_labels(feature_extractor):
-    sentences = []
+    orig_sents = []
+    proc_sents = []
     labels = []
 
     documents = feature_extractor.documents
@@ -52,12 +64,14 @@ def __sentences_and_labels(feature_extractor):
         for sent_obj in documents[key].get_sentence_obj_list():
             # Find the words contained to be used as unigram features
             sentence = {}
-            grams = __process_sentence(sent_obj.sentence)
+            orig_sent = sent_obj.sentence
+            orig_sents.append(orig_sent)
+            grams = __process_sentence(orig_sent)
 
             # TODO -- add useful features
             for gram in grams:
                 sentence[gram] = True
-            sentences.append(sentence)
+            proc_sents.append(sentence)
 
             # Track gold labels
             if sent_obj.has_substance_abuse_entity():
@@ -65,7 +79,7 @@ def __sentences_and_labels(feature_extractor):
             else:
                 labels.append(NO_SUBSTANCE)
 
-    return sentences, labels
+    return orig_sents, proc_sents, labels
 
 
 def __vectorize_data(sentences, labels):
@@ -85,7 +99,8 @@ def __vectorize_data(sentences, labels):
 
 def __vectorize_test_sent(sentence, feature_map):
     vector = [0 for _ in range(len(feature_map))]
-    grams = __process_sentence(sentence)
+    #grams = __process_sentence(sentence)
+    grams = sentence.split()
     for gram in grams:
         if gram in feature_map:
             index = feature_map[gram]

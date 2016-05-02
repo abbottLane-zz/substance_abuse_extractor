@@ -33,6 +33,8 @@ training_doc_objs = training_documents
 training_feat_extractor = FeatureExtractor(training_doc_objs)
 classifier, feature_map = Classifier.train_model(training_feat_extractor)
 
-# Run classifier on test data
-testing_feat_extractor = "" #FeatureExtractor(test_doc_objs) # TODO -- make test doc objs. btw is "needs filled" normal or weird?
-classifications = Classifier.classify_sentences(classifier, feature_map, testing_feat_extractor)
+# Filter out sentences w no substance info
+testing_feat_extractor = "" #FeatureExtractor(test_doc_objs) # TODO -- make test doc objs
+orig_sents_w_subst, proc_sents_w_subst = Classifier.classify_sentences(classifier, feature_map, testing_feat_extractor)
+print("Original sentences w substance info:\n\t" + str(orig_sents_w_subst))
+print("Processed sentences w substance info:\n\t" + str(proc_sents_w_subst))
