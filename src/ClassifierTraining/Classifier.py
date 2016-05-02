@@ -10,25 +10,40 @@ NO_SUBSTANCE = "no_subs_info"
 
 def train_model(feature_extractor):
         # Convert Data to vectors
-        sent_vectors, labels, feature_map = __vectorize_data(feature_extractor)
+        sents, labels = __sentences_and_labels(feature_extractor)
+        sent_vectors, labels, feature_map = __vectorize_data(sents, labels)
 
         # Create Model
         classifier = LinearSVC()
         classifier.fit(sent_vectors, labels)
 
-        # Test sentences
-        none_sent = "Patient likes $3.25 baseball"
-        fat = "Boy is this patient 3.2% fat"
-        all_sent = "Patient is 100% a 1.3 non-smoker"
-        sucker = "Patient 'smokes' 8 packs a day"
-        test_sents = [none_sent, fat, all_sent, sucker]
-        #__test_model(classifier, feature_map, test_sents)
-
         return classifier, feature_map
 
 
-def __vectorize_data(feature_extractor):
+def classify_sentences(classifier, feature_map, feat_extractor):
 
+    # Get data
+    #sents, labels = __sentences_and_labels(feat_extractor)
+
+    # Test sentences
+    # TODO -- replace temp sents with real sents
+    none_sent = "Patient \likes $3.25 baseball"
+    fat = "Boy is this /patient 3.2% fat"
+    all_sent = "Patient is 100% a 1.3 non-smoker"
+    sucker = "Patient 'smokes' 8 packs a day"
+    test_sents = [none_sent, fat, all_sent, sucker]
+
+    number_of_sentences = len(test_sents)
+    number_of_features = len(feature_map)
+
+    test_vectors = [__vectorize_test_sent(sent, feature_map) for sent in test_sents]
+    test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
+    predictions = classifier.predict(test_array)
+
+    return predictions
+
+
+def __sentences_and_labels(feature_extractor):
     sentences = []
     labels = []
 
@@ -50,6 +65,11 @@ def __vectorize_data(feature_extractor):
             else:
                 labels.append(NO_SUBSTANCE)
 
+    return sentences, labels
+
+
+def __vectorize_data(sentences, labels):
+
     # convert to vectors
     dict_vec = DictVectorizer()
     sentence_vectors = dict_vec.fit_transform(sentences).toarray()
@@ -63,7 +83,7 @@ def __vectorize_data(feature_extractor):
     return sentence_vectors, np.array(labels), feature_map
 
 
-def vectorize_test_sent(sentence, feature_map):
+def __vectorize_test_sent(sentence, feature_map):
     vector = [0 for _ in range(len(feature_map))]
     grams = __process_sentence(sentence)
     for gram in grams:
@@ -111,14 +131,3 @@ def __process_sentence(sentence):
                 processed_grams.append(gram)
 
     return processed_grams
-
-
-def __test_model(classifier, feature_map, test_sents):
-    number_of_sentences = len(test_sents)
-    number_of_features = len(feature_map)
-
-    test_vectors = [vectorize_test_sent(sent, feature_map) for sent in test_sents]
-    test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
-
-    predictions = classifier.predict(test_array)
-    print(predictions)

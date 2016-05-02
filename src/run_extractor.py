@@ -29,5 +29,10 @@ training_doc_objs = training_documents
 #### SENTENCE TRAINING PIPELINE #########
 ########################################
 
-feature_extractor = FeatureExtractor(training_doc_objs)
-classifier, feature_map = Classifier.train_model(feature_extractor)
+# Train classifier
+training_feat_extractor = FeatureExtractor(training_doc_objs)
+classifier, feature_map = Classifier.train_model(training_feat_extractor)
+
+# Run classifier on test data
+testing_feat_extractor = "" #FeatureExtractor(test_doc_objs) # TODO -- make test doc objs. btw is "needs filled" normal or weird?
+classifications = Classifier.classify_sentences(classifier, feature_map, testing_feat_extractor)
