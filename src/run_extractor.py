@@ -3,7 +3,7 @@ from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from DataLoader.DataLoader import DataLoader
 from DataLoader.AnnotationDoc import AnnotationDoc
 from DataLoader.Document import  Document
-from ClassifierTraining import Classifier
+from Classification import Classifier
 
 
 ####################################
@@ -29,12 +29,22 @@ training_doc_objs = training_documents
 #### SENTENCE TRAINING PIPELINE #########
 ########################################
 
-# Train classifier
+# Train classifiers
 training_feat_extractor = FeatureExtractor(training_doc_objs)
-classifier, feature_map = Classifier.train_model(training_feat_extractor)
+# classifier, feature_map = Classifier.train_model(training_feat_extractor)
+classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
 
-# Filter out sentences w no substance info
+# Classify sentences
+'''
 testing_feat_extractor = "" #FeatureExtractor(test_doc_objs) # TODO -- make test doc objs
-orig_sents_w_subst, proc_sents_w_subst = Classifier.classify_sentences(classifier, feature_map, testing_feat_extractor)
+orig_sents_w_subst, proc_sents_w_subst = Classifier.classify_for_substance(classifier, feature_map, testing_feat_extractor)
+#sentObjs_w_subst, proc_sents_w_subst, sentObjs_no_subst = Classification.classify_sentences(classifier, feature_map, testing_feat_extractor)
 print("Original sentences w substance info:\n\t" + str(orig_sents_w_subst))
 print("Processed sentences w substance info:\n\t" + str(proc_sents_w_subst))
+'''
+
+# TODO -- make test doc objs
+testing_feat_extractor = FeatureExtractor(training_doc_objs)
+sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
+print(sent_classification_info.gold_classf_sent_lists)
+print(sent_classification_info.predicted_class_sent_lists)
