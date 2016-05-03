@@ -11,18 +11,17 @@ def train_models(feature_extractor):
     classifiers = {}
     feat_maps = {}
 
-    sent_obj_classes = __sentences_and_labels(feature_extractor)
+    sent_info = __sentences_and_labels(feature_extractor)
 
     # General Substance Classifier
-    subst_classifier, subst_feat_map = train_model(sent_obj_classes.processed_sents,
-                                                   sent_obj_classes.get_labels(Globals.SUBSTANCE))
+    subst_classifier, subst_feat_map = train_model(sent_info.sent_features, SentInfo.get_substance_labels(sent_info, Globals.SUBSTANCE))
     classifiers[Globals.SUBSTANCE] = subst_classifier
     feat_maps[Globals.SUBSTANCE] = subst_feat_map
 
     # Specific classifiers
     for class_type in Globals.SPECIFIC_CLASSIFIER_TYPES:
-        sent_objs, proc_sents, labels = sent_obj_classes.get_sentences_w_classf_type(class_type)
-        classifier, feat_map = train_model(proc_sents, labels)
+        sent_indices, sent_feats, labels = sent_info.sent_feats_w_classf_type(class_type)
+        classifier, feat_map = train_model(sent_feats, labels)
         classifiers[class_type] = classifier
         feat_maps[class_type] = feat_map
 
@@ -59,24 +58,12 @@ def get_classifications(classifiers, feat_maps, feat_extractor):
 def classify(classifier, classifier_type, feature_map, sent_info):
 
     # Get data
-    sent_indices, proc_sents, labels = sent_info.get_sentences_w_classf_type(classifier_type)
-
-    # Temporary test sentences
-    '''
-    # TODO -- replace temp sents with real sents
-    none_sent = "Patient \likes $3.25 baseball"
-    fat = "Boy is this /patient 3.2% fat"
-    all_sent = 'Patient is "100% a 1.3 non-smoker"'
-    sucker = "Patient 'smokes', 8 packs*&& a day."
-    test_sents = [none_sent, fat, all_sent, sucker]
-    print("\nTest sentences:\n\t" + str(test_sents))
-    '''
-
-    number_of_sentences = len(proc_sents)
+    sent_indices, sent_feats, labels = sent_info.sent_feats_w_classf_type(classifier_type)
+    number_of_sentences = len(sent_feats)
     number_of_features = len(feature_map)
 
     # Vectorize sentences and classify
-    test_vectors = [__vectorize_test_sent(sent, feature_map) for sent in proc_sents]
+    test_vectors = [__vectorize_test_sent(feats, feature_map) for feats in sent_feats]
     test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
     classifications = classifier.predict(test_array)
 
@@ -86,14 +73,15 @@ def classify(classifier, classifier_type, feature_map, sent_info):
         if classification == Globals.HAS_SUBSTANCE:
             sents_w_info.append(index)
 
-    sent_info.predicted_class_sent_lists[classifier_type] = sents_w_info
+    sent_info.predicted_classf_sent_lists[classifier_type] = sents_w_info
 
     return sent_info
 
 
 def __sentences_and_labels(feature_extractor):
-    all_sent_objs = []
+    orig_sents = []
     proc_sents = []
+    sent_pre_vectors = []
 
     gold_labels = {}
     gold_labels[Globals.SUBSTANCE] = set()
@@ -105,19 +93,20 @@ def __sentences_and_labels(feature_extractor):
 
     documents = feature_extractor.documents
     for key in documents:
-        doc_sent_objs = documents[key].get_sentence_obj_list()
-        all_sent_objs.append(doc_sent_objs)
-
-        for sent_obj in doc_sent_objs:
+        for sent_obj in documents[key].get_sentence_obj_list():
             # Preprocess sentence
-            sentence = {}
+            sent_pre_vector = {}
+            sentence = sent_obj.sentence
+
+            orig_sents.append(sentence)
             grams = __process_sentence(sent_obj.sentence)
+            proc_sents.append(" ".join(grams))
 
             # - Features -
             # Unigrams
             for gram in grams:
-                sentence[gram] = True
-            proc_sents.append(sentence)
+                sent_pre_vector[gram] = True
+            sent_pre_vectors.append(sent_pre_vector)
 
             # - Track sentences gold labelled as having substance -
             # Substance
@@ -136,9 +125,9 @@ def __sentences_and_labels(feature_extractor):
 
             sent_index += 1
 
-    sent_classes = SentInfo.SentInfo(all_sent_objs, proc_sents, gold_labels)
+    sent_info = SentInfo.SentInfo(orig_sents, proc_sents, sent_pre_vectors, gold_labels)
 
-    return sent_classes
+    return sent_info
 
 
 def __vectorize_data(sentences, labels):
@@ -155,10 +144,9 @@ def __vectorize_data(sentences, labels):
     return sentence_vectors, np.array(labels), feature_map
 
 
-def __vectorize_test_sent(sentence, feature_map):
+def __vectorize_test_sent(feats, feature_map):
     vector = [0 for _ in range(len(feature_map))]
-    #grams = __process_sentence(sentence)
-    grams = sentence.split()
+    grams = feats.keys()
     for gram in grams:
         if gram in feature_map:
             index = feature_map[gram]
