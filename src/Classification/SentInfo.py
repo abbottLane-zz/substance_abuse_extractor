@@ -74,5 +74,19 @@ class SentInfo:
         return sents
 
     def evaluate_classifications(self):
-        # TODO -- do we care about this? Yes we do.
-        pass
+        print("\nClassifier Evaluation:")
+        for classf in self.predicted_classf_sent_lists:
+
+            # Accuracy
+            total = 0
+            right = 0
+            for index, sent in enumerate(self.original_sents):
+                total += 1
+                if index in self.predicted_classf_sent_lists[classf] and index in self.gold_classf_sent_lists[classf]:
+                    right += 1
+                elif index not in self.predicted_classf_sent_lists[classf] and index not in self.gold_classf_sent_lists[classf]:
+                    right += 1
+            accuracy = right/total
+
+            # Precision
+            print(classf + " accuracy: " + str(accuracy))

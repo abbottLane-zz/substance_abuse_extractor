@@ -26,6 +26,7 @@ for key in training_documents.keys():
 # Data Loader pipeline output
 training_doc_objs = training_documents
 
+
 ##########################################
 #### SENTENCE TRAINING PIPELINE #########
 ########################################
@@ -42,6 +43,8 @@ sent_classification_info = Classifier.get_classifications(classifiers, feature_m
 # How to use:
 print("\nSentences with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
 print("Sentences with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
+
+sent_classification_info.evaluate_classifications()
 
 ##################################
 #### EXTRACTION PIPELINE #########
