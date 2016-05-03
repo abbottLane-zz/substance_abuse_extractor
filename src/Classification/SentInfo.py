@@ -38,7 +38,7 @@ class SentInfo:
 
         return sent_indices, sent_feats, labels
 
-'''
+    '''
     def get_labels(self, classifier_type):
         labels = []
 
@@ -58,14 +58,21 @@ class SentInfo:
                     labels.append(Globals.NO_SUBSTANCE)
 
         return labels
-'''
+    '''
 
+    def get_substance_labels(self, classifier_type):
+        labels = []
+        for index in range(len(self.processed_sents)):
+            if index in self.gold_classf_sent_lists[classifier_type]:
+                labels.append(Globals.HAS_SUBSTANCE)
+            else:
+                labels.append(Globals.NO_SUBSTANCE)
+        return labels
 
-def get_substance_labels(self, classifier_type):
-    labels = []
-    for index in range(len(self.processed_sents)):
-        if index in self.gold_classf_sent_lists[classifier_type]:
-            labels.append(Globals.HAS_SUBSTANCE)
-        else:
-            labels.append(Globals.NO_SUBSTANCE)
-    return labels
+    def get_sentences_w_info(self, classifier_type):
+        sents = [self.original_sents[index] for index in self.predicted_classf_sent_lists[classifier_type]]
+        return sents
+
+    def evaluate_classifications(self):
+        # TODO -- do we care about this? Yes we do.
+        pass

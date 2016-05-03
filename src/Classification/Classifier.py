@@ -14,7 +14,7 @@ def train_models(feature_extractor):
     sent_info = __sentences_and_labels(feature_extractor)
 
     # General Substance Classifier
-    subst_classifier, subst_feat_map = train_model(sent_info.sent_features, SentInfo.get_substance_labels(sent_info, Globals.SUBSTANCE))
+    subst_classifier, subst_feat_map = train_model(sent_info.sent_features, sent_info.get_substance_labels(Globals.SUBSTANCE))
     classifiers[Globals.SUBSTANCE] = subst_classifier
     feat_maps[Globals.SUBSTANCE] = subst_feat_map
 

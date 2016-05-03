@@ -4,6 +4,7 @@ from DataLoader.DataLoader import DataLoader
 from DataLoader.AnnotationDoc import AnnotationDoc
 from DataLoader.Document import  Document
 from Classification import Classifier
+from Classification import Globals
 
 
 ####################################
@@ -37,5 +38,11 @@ classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
 # TODO -- make test doc objs
 testing_feat_extractor = FeatureExtractor(training_doc_objs)
 sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
-print(sent_classification_info.gold_classf_sent_lists)
-print(sent_classification_info.predicted_classf_sent_lists)
+
+# How to use:
+print("\nSentences with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
+print("Sentences with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
+
+##################################
+#### EXTRACTION PIPELINE #########
+##################################
