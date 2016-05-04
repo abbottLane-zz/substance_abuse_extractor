@@ -33,8 +33,6 @@ class Document:
                 # if entity_assigned == True:
                 #     entity_assigned=False
                 #     break
-                if sent.sentence == "FAMILY HISTORY AND SOCIAL HISTORY: Significant for Huntington disease in her mother and diabetes in her father.":
-                    tmp=0
 
                 begin_indexes_of_sent_entities = entity.get_entity_begin_idxs()
                 for idx in begin_indexes_of_sent_entities:
