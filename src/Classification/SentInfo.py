@@ -12,53 +12,39 @@ class SentInfo:
         self.predicted_classf_sent_lists = {}                # positive sents for each classf         - our system
 
     # Returns the dicts of sentence features relevant to a particular classifier
-    def sent_feats_w_classf_type(self, classifier_type):
+    def gold_sent_feats(self, classifier_type):
         sent_indices = []
         sent_feats = []
         labels = []
 
+        # Grab all sentences labelled substance and their specific labels
+        for index in self.gold_classf_sent_lists[Globals.SUBSTANCE]:
+            sent_indices.append(index)
+            sent_feats.append(self.sent_features[index])
+            if index in self.gold_classf_sent_lists[classifier_type]:
+                labels.append(Globals.HAS_SUBSTANCE)
+            else:
+                labels.append(Globals.NO_SUBSTANCE)
+
+        return sent_feats, labels
+
+    # Returns the dicts of sentence features relevant to a particular classifier
+    def predicted_sent_feats(self, classifier_type):
+        sent_indices = []
+        sent_feats = []
+
         if classifier_type == Globals.SUBSTANCE:
             # Grab all sentences and their labels
             for index in range(len(self.original_sents)):
-                if index in self.gold_classf_sent_lists[classifier_type]:
-                    sent_indices.append(index)
-                    sent_feats.append(self.sent_features[index])
-                    labels.append(Globals.HAS_SUBSTANCE)
-                else:
-                    labels.append(Globals.NO_SUBSTANCE)
-        else:
-            # Grab all sentences labelled substance and their specific labels
-            for index in self.gold_classf_sent_lists[Globals.SUBSTANCE]:
                 sent_indices.append(index)
                 sent_feats.append(self.sent_features[index])
-                if index in self.gold_classf_sent_lists[classifier_type]:
-                    labels.append(Globals.HAS_SUBSTANCE)
-                else:
-                    labels.append(Globals.NO_SUBSTANCE)
-
-        return sent_indices, sent_feats, labels
-
-    '''
-    def get_labels(self, classifier_type):
-        labels = []
-
-        if classifier_type == Globals.SUBSTANCE:
-            # Grab all sentences and their labels
-            for index in range(len(self.processed_sents)):
-                if index in self.gold_classf_sent_lists[classifier_type]:
-                    labels.append(Globals.HAS_SUBSTANCE)
-                else:
-                    labels.append(Globals.NO_SUBSTANCE)
         else:
             # Grab all sentences labelled substance and their specific labels
-            for index in self.gold_classf_sent_lists[Globals.SUBSTANCE]:
-                if index in self.gold_classf_sent_lists[classifier_type]:
-                    labels.append(Globals.HAS_SUBSTANCE)
-                else:
-                    labels.append(Globals.NO_SUBSTANCE)
+            for index in self.predicted_classf_sent_lists[Globals.SUBSTANCE]:
+                sent_indices.append(index)
+                sent_feats.append(self.sent_features[index])
 
-        return labels
-    '''
+        return sent_indices, sent_feats
 
     def get_substance_labels(self, classifier_type):
         labels = []

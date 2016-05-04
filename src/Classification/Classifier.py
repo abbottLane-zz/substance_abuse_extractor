@@ -20,7 +20,7 @@ def train_models(feature_extractor):
 
     # Specific classifiers
     for class_type in Globals.SPECIFIC_CLASSIFIER_TYPES:
-        sent_indices, sent_feats, labels = sent_info.sent_feats_w_classf_type(class_type)
+        sent_feats, labels = sent_info.gold_sent_feats(class_type)
         classifier, feat_map = train_model(sent_feats, labels)
         classifiers[class_type] = classifier
         feat_maps[class_type] = feat_map
@@ -58,7 +58,7 @@ def get_classifications(classifiers, feat_maps, feat_extractor):
 def classify(classifier, classifier_type, feature_map, sent_info):
 
     # Get data
-    sent_indices, sent_feats, labels = sent_info.sent_feats_w_classf_type(classifier_type)
+    sent_indices, sent_feats = sent_info.predicted_sent_feats(classifier_type)
     number_of_sentences = len(sent_feats)
     number_of_features = len(feature_map)
 
