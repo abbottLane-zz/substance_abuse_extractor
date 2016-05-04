@@ -6,25 +6,52 @@ from DataLoader.Document import  Document
 from Classification import Classifier
 from Classification import Globals
 
+def get_test_fold(folds_data, test_fold_num):
+
+    test_data_docs = set()
+    for line in folds_data:
+        if "foldName" in line:
+            pass
+        else:
+            fold_name = line.split()[0]
+            fold_number = fold_name.split("_")[1]
+            file_id = line.split()[1]
+
+            if test_fold_num == int(fold_number):
+                test_data_docs.add(file_id[:-4])
+
+    return test_data_docs
 
 ####################################
 #### DATA LOADER PIPELINE #########
 ##################################
+
+# load folds data
+with open("../Data/folds.out") as file:
+   folds_data = file.readlines()
+test_set = get_test_fold(folds_data, 1)
+
 # Load data from txt files into memory
-training_data = DataLoader("../Data")
+data = DataLoader("../Data")
 
 # create dictionaries of {documentId : DocumentObject}
-training_documents = training_data.get_file_dictionary()
-annotations = training_data.get_annotations_dictionary()
+training_documents = data.get_file_dictionary()
+annotations = data.get_annotations_dictionary()
 
-# merge annotations data into the documents
+# merge annotations data into the documents and split into training and testing sets
+training_doc_objs = dict()
+testing_doc_objs = dict()
+
 for key in training_documents.keys():
     document = training_documents[key]
     annotation = annotations[key]
     document.set_annotation(annotation)
 
-# Data Loader pipeline output
-training_doc_objs = training_documents
+    if document.get_id() in test_set:
+        testing_doc_objs[document.get_id()] = document
+    else:
+        training_doc_objs[document.get_id()] = document
+
 
 
 ##########################################

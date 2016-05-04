@@ -4,9 +4,14 @@ import fnmatch
 from DataLoader.AnnotationDoc import AnnotationDoc
 from DataLoader.Document import Document
 
+
+
 class DataLoader:
     def __init__(self, fname):
         self.doc_dict = dict()
+        self.ann_dict = dict()
+
+
         # Read all Documents into doc_list
         for dirpath, dirs, files in os.walk(fname):
             for filename in fnmatch.filter(files, "*.txt"):
@@ -16,7 +21,7 @@ class DataLoader:
                     doc = Document(id, content)
                     self.doc_dict[id]= doc
 
-        self.ann_dict = dict()
+
         # Read all annotation files into ann_list
 
         for dirpath, dirs, files in os.walk(fname):
