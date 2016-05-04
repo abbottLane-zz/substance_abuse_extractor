@@ -72,7 +72,27 @@ class SentInfo:
                     right += 1
                 elif index not in self.predicted_classf_sent_lists[classf] and index not in self.gold_classf_sent_lists[classf]:
                     right += 1
-            accuracy = right/total
+            if total:
+                accuracy = right/total
+            else:
+                accuracy = 0
 
             # Precision
-            print(classf + " accuracy: " + str(accuracy))
+            n = len([c for c in self.predicted_classf_sent_lists[classf] if (c in self.gold_classf_sent_lists[classf])])
+            d = len(self.predicted_classf_sent_lists[classf])
+            if d:
+                precision = n/d
+            else:
+                precision = 0
+
+            # Recall
+            n = len([c for c in self.gold_classf_sent_lists[classf] if (c in self.predicted_classf_sent_lists[classf])])
+            d = len(self.gold_classf_sent_lists[classf])
+            if d:
+                recall = n/d
+            else:
+                recall = 0
+
+            # Output Results
+            print(classf + " accuracy: " + str(accuracy) + ", \tprecision: " + str(precision) +
+                  ", \trecall: " + str(recall))

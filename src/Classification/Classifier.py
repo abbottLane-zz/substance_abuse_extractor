@@ -135,7 +135,7 @@ def __vectorize_data(sentences, labels):
     dict_vec = DictVectorizer()
     sentence_vectors = dict_vec.fit_transform(sentences).toarray()
 
-    # create feature map
+    # map features to the appropriate index in the established SVM vector representation for each classifier
     feature_names = dict_vec.get_feature_names()
     feature_map = {}
     for index, feat in enumerate(feature_names):
