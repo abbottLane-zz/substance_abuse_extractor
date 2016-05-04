@@ -64,7 +64,7 @@ classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
 
 # Classify sentences
 # TODO -- make test doc objs
-testing_feat_extractor = FeatureExtractor(training_doc_objs)
+testing_feat_extractor = FeatureExtractor(testing_doc_objs)
 sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
 
 # How to use:
