@@ -3,7 +3,8 @@ from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from DataLoader.DataLoader import DataLoader
 from DataLoader.AnnotationDoc import AnnotationDoc
 from DataLoader.Document import  Document
-from ClassifierTraining import Classifier
+from Classification import Classifier
+from Classification import Globals
 
 def get_test_fold(folds_data, test_fold_num):
 
@@ -52,16 +53,26 @@ for key in training_documents.keys():
         training_doc_objs[document.get_id()] = document
 
 
+
 ##########################################
 #### SENTENCE TRAINING PIPELINE #########
 ########################################
 
-# Train classifier
+# Train classifiers
 training_feat_extractor = FeatureExtractor(training_doc_objs)
-classifier, feature_map = Classifier.train_model(training_feat_extractor)
+classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
 
-# Filter out sentences w no substance info
-testing_feat_extractor = FeatureExtractor(training_doc_objs) # TODO -- make test doc objs
-orig_sents_w_subst, proc_sents_w_subst = Classifier.classify_sentences(classifier, feature_map, testing_feat_extractor)
-print("Original sentences w substance info:\n\t" + str(orig_sents_w_subst))
-print("Processed sentences w substance info:\n\t" + str(proc_sents_w_subst))
+# Classify sentences
+# TODO -- make test doc objs
+testing_feat_extractor = FeatureExtractor(training_doc_objs)
+sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
+
+# How to use:
+print("\nSentences with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
+print("Sentences with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
+
+sent_classification_info.evaluate_classifications()
+
+##################################
+#### EXTRACTION PIPELINE #########
+##################################
