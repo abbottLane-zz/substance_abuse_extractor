@@ -1,0 +1,33 @@
+She	0	0	0	0	0	0	0
+does	STATUS	0	0	0	0	0	0
+not	STATUS	0	0	0	0	0	0
+smoke.	0	0	0	METHOD	0	0	0
+She	0	0	0	0	0	0	0
+drinks	STATUS	0	0	0	0	0	0
+wine	0	0	0	TYPE	0	0	0
+a	0	0	0	0	0	0	AMOUNT	0	0
+few	0	0	0	0	0	0	AMOUNT	0	0
+drinks	0	0	0	0	0	0	AMOUNT	0	0
+a	0	0	0	0	0	0	FREQUENCY	0
+month.	0	0	0	0	0	0	FREQUENCY	0
+She	0	0	0	0	0	0	0
+denies STATUS	0	0	0	0	0	0
+tobacco	0	0	0	0	0	0	0
+at	0	0	0	0	0	0	0
+this	0	0	0	0	0	0	0
+time	0	0	0	0	0	0	0
+though	0	0	0	0	0	0	0
+she	0	0	0	0	0	0	HISTORY
+was	0	0	0	0	0	0	HISTORY
+a	0	0	0	0	0	0	HISTORY
+previous	0	0	0	0	0	0	HISTORY
+smoker,	0	0	0	0	0	0	HISTORY
+stopped	0	TEMPORAL	0	0	0	0	0
+four	0	TEMPORAL	0	0	0	0	0
+years	0	TEMPORAL	0	0	0	0	0
+ago,	0	TEMPORAL	0	0	0	0	0
+and	0	0	0	0	0	0	0
+she	0	0	0	0	0	0	0
+denies	STATUS	0	0	0	0	0	0
+alcohol	0	0	0	0	0	0	0
+use.	0	0	0	0	0	0	0
