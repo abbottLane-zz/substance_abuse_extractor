@@ -1,6 +1,6 @@
 trainFile = dummer.tsv
 serializeTo = ner-model.ser.gz
-map = word=0,status=1
+map = word=0,answer=1,status=2
 useClassFeature=true
 useWord=true
 useNGrams=true

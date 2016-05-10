@@ -1,6 +1,8 @@
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from Classification import Globals
 import subprocess
+# from nltk.tag import StanfordNERTagger
+
 
 features = [
     "useClassFeature=true",
@@ -27,8 +29,12 @@ def classify(stanford_ner_path, train_file_name, prop_file_name, shell_script_na
     :return: list of sent_objs with attributes filled
     '''
     global features
-    # create_prop_file(prop_file_name, features)
-    train_model(stanford_ner_path, "austen.prop", shell_script_name)
+    create_prop_file(prop_file_name, features)
+    train_model(stanford_ner_path, prop_file_name, shell_script_name)
+
+
+def test_model():
+    pass
 
 
 def train_model(stanford_ner_path, prop_file_name, shell_script_name):
@@ -47,7 +53,7 @@ def create_prop_file(prop_file_name, features):
     prop_file.write("trainFile = " + train_file_name + "\n")
     prop_file.write("serializeTo = ner-model.ser.gz\n")
     # prop_file.write("map = word=0,status=1,temp=2,method=3,type=4,amount=5,freq=6,hist=7\n")
-    prop_file.write("map = word=0,status=1\n")
+    prop_file.write("map = word=0,answer=1,status=2\n")
     for feat in features:
         prop_file.write(feat + "\n")
     prop_file.close()
@@ -55,7 +61,9 @@ def create_prop_file(prop_file_name, features):
 
 if __name__ == "__main__":
     stanford_ner_path = "/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar"
-    train_file_name = "jane-austen-emma-ch1.tsv"
+    # train_file_name = "jane-austen-emma-ch1.tsv"
+    train_file_name = "dummer.tsv"
+    # prop_file_name = "austen.prop"
     prop_file_name = "attr_extract.prop"
     shell_script_name = "train_model.sh"
     classify(stanford_ner_path, train_file_name, prop_file_name, shell_script_name)
