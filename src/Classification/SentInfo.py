@@ -2,8 +2,9 @@ from Classification import Globals
 
 
 class SentInfo:
-    def __init__(self, orig_sents, proc_sents, sent_features, classified_sent_lists):
-        self.original_sents = orig_sents                 # original text, gold labels
+    def __init__(self, sent_objs, orig_sents, proc_sents, sent_features, classified_sent_lists):
+        self.sent_objs = sent_objs                 # sentence objs
+        self.original_sents = orig_sents           # original text, gold labels
         self.processed_sents = proc_sents          # preprocessed text
         self.sent_features = sent_features         # dicts of sentence features to be converted to vector classifiers
 
@@ -56,12 +57,15 @@ class SentInfo:
         return labels
 
     def get_sentences_w_info(self, classifier_type):
-        sents = [self.original_sents[index] for index in self.predicted_classf_sent_lists[classifier_type]]
+        sents = [self.sent_objs[index] for index in self.predicted_classf_sent_lists[classifier_type]]
         return sents
 
-    def evaluate_classifications(self):
-        print("\nClassifier Evaluation:")
+    def evaluate_classifications(self, results_file, test_fold):
+        misclass_sents = {}
+        out_file = open(results_file, "w")
+        out_file.write("\nClassifier Evaluation " + str(test_fold) + "\n------------------------\n")
         for classf in self.predicted_classf_sent_lists:
+            misclass_sents[classf] = {}
 
             # Accuracy
             total = 0
@@ -72,6 +76,8 @@ class SentInfo:
                     right += 1
                 elif index not in self.predicted_classf_sent_lists[classf] and index not in self.gold_classf_sent_lists[classf]:
                     right += 1
+                else:
+                    misclass_sents[classf][sent] = index in self.gold_classf_sent_lists[classf]
             if total:
                 accuracy = right/total
             else:
@@ -94,5 +100,8 @@ class SentInfo:
                 recall = 0
 
             # Output Results
-            print(classf + " accuracy: " + str(accuracy) + ", \tprecision: " + str(precision) +
-                  ", \trecall: " + str(recall))
+            out_file.write("\n<<< " + classf + " >>>\n\tAccuracy:\t" + str(accuracy) + "\n\tPrecision:\t" +
+                           str(precision) + "\n\tRecall:  \t" + str(recall) + "\nMislabeled Sentences:\n")
+
+            for sent in misclass_sents[classf]:
+                out_file.write(sent + "\n - Should be " + str(misclass_sents[classf][sent]) + "\n")

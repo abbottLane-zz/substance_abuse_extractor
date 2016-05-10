@@ -79,6 +79,7 @@ def classify(classifier, classifier_type, feature_map, sent_info):
 
 
 def __sentences_and_labels(feature_extractor):
+    sent_objs = []
     orig_sents = []
     proc_sents = []
     sent_pre_vectors = []
@@ -93,7 +94,10 @@ def __sentences_and_labels(feature_extractor):
 
     documents = feature_extractor.documents
     for key in documents:
-        for sent_obj in documents[key].get_sentence_obj_list():
+        doc_sent_objs = documents[key].get_sentence_obj_list()
+        sent_objs.extend(doc_sent_objs)
+
+        for sent_obj in doc_sent_objs:
             # Preprocess sentence
             sent_pre_vector = {}
             sentence = sent_obj.sentence
@@ -125,7 +129,7 @@ def __sentences_and_labels(feature_extractor):
 
             sent_index += 1
 
-    sent_info = SentInfo.SentInfo(orig_sents, proc_sents, sent_pre_vectors, gold_labels)
+    sent_info = SentInfo.SentInfo(sent_objs, orig_sents, proc_sents, sent_pre_vectors, gold_labels)
 
     return sent_info
 
