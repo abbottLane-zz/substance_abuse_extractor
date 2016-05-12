@@ -27,9 +27,10 @@ def get_test_fold(folds_data, test_fold_num):
 ##################################
 
 # load folds data
+TEST_FOLD = 4
 with open("../Data/folds.out") as file:
    folds_data = file.readlines()
-test_set = get_test_fold(folds_data, 1)
+test_set = get_test_fold(folds_data, TEST_FOLD)
 
 # Load data from txt files into memory
 data = DataLoader("../Data")
@@ -63,15 +64,15 @@ training_feat_extractor = FeatureExtractor(training_doc_objs)
 classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
 
 # Classify sentences
-# TODO -- make test doc objs
 testing_feat_extractor = FeatureExtractor(testing_doc_objs)
 sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
 
 # How to use:
-print("\nSentences with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
-print("Sentences with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
+print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
+print("Sentence Objects with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
 
-sent_classification_info.evaluate_classifications()
+results_file = "classifier_results.txt"
+sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
 
 ##################################
 #### EXTRACTION PIPELINE #########
