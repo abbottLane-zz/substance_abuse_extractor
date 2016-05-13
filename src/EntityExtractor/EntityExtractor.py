@@ -97,10 +97,9 @@ def create_train_file(training_doc_objs, train_file_name, type):
                 sent_offset = sent_obj.begin_idx
                 for match in re.finditer("\S+", sentence):
                     start = match.start()
-                    end = match.end()
                     pointer = sent_offset + start
                     word = match.group(0)
-                    train_file.write(word + "\t")
+                    train_file.write(word + "[" + str(pointer) + "," + str(sent_offset + match.end()) + "]" + "\t")
                     answer = "0"
                     for entity in entity_set:
                         if answer != "0":
@@ -111,7 +110,9 @@ def create_train_file(training_doc_objs, train_file_name, type):
                                 if attr_dict[attr].type == type and \
                                    int(attr_dict[attr].span_begin) <= pointer <\
                                    int(attr_dict[attr].span_end):
-                                    answer = type
+                                    answer = type + "\t" + attr_dict[attr].text +\
+                                             "[" + attr_dict[attr].span_begin +\
+                                             "," + attr_dict[attr].span_end + "]"
                                     break
                     train_file.write(answer + "\n")
 
