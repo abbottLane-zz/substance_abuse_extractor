@@ -12,7 +12,7 @@ class Sentence:
         pass
 
     def has_entity(self):
-        if len(self.set_entities) ==0:
+        if len(self.set_entities) == 0:
             return False
         return True
 

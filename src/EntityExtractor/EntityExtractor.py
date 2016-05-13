@@ -2,6 +2,7 @@ from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from Classification import Globals
 import subprocess
 # from nltk.tag import StanfordNERTagger
+import re
 
 
 features = [
@@ -52,18 +53,29 @@ def classify(training_doc_objs,
     test_model(stanford_ner_path, model_name, test_file_name, test_script_name)
 
 
+def test(testing_doc_objs, path="EntityExtractor/",
+         stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar",
+         test_script_name="test_classify.sh"):
+    global entity_types
+    for type in entity_types:
+        test_file_name = path + "Test-Files/" + "test-" + type + ".tsv"
+        model_name = path + "Models/" + "model-" + type + ".ser.gz"
+        create_train_file(testing_doc_objs, test_file_name, type)
+        test_model(stanford_ner_path, model_name, test_file_name, path+test_script_name)
+
+
 def train(training_doc_objs, path="EntityExtractor/",
           stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar",
           train_script_name="train_model.sh"):
     global features
     global entity_types
     for type in entity_types:
-        train_file_name = path + "train-" + type + ".tsv"
-        prop_file_name = path + type + ".prop"
-        model_name = path + type + "-model.ser.gz"
-        create_train_file(training_doc_objs, train_file_name)
+        train_file_name = path + "Train-Files/" + "train-" + type + ".tsv"
+        prop_file_name = path + "Prop-Files/" + type + ".prop"
+        model_name = path + "Models/" + "model-" + type + ".ser.gz"
+        create_train_file(training_doc_objs, train_file_name, type)
         create_prop_file(prop_file_name, train_file_name, features, model_name)
-        train_model(stanford_ner_path, prop_file_name, train_script_name)
+        train_model(stanford_ner_path, prop_file_name, path+train_script_name)
 
 
 def test_model(stanford_ner_path, model_name, test_file_name, test_script_name):
@@ -74,7 +86,7 @@ def train_model(stanford_ner_path, prop_file_name, train_script_name):
     subprocess.call(["./"+train_script_name+" "+stanford_ner_path+" "+prop_file_name], shell=True)
 
 
-def create_train_file(training_doc_objs, train_file_name):
+def create_train_file(training_doc_objs, train_file_name, type):
     train_file = open(train_file_name, 'w')
     for doc in training_doc_objs:
         doc_obj = training_doc_objs[doc]
@@ -82,12 +94,27 @@ def create_train_file(training_doc_objs, train_file_name):
             if sent_obj.has_substance_abuse_entity():
                 sentence = sent_obj.sentence
                 entity_set = sent_obj.set_entities
-                for entity in entity_set:
-                    attr_dict = entity.dict_of_attribs
-                    for attr in attr_dict:
-                        for word in attr_dict[attr].text.strip().split():
-                            train_file.write(word + "\t" + attr_dict[attr].type + "\n")
-                        # print(attr_dict[attr])
+                sent_offset = sent_obj.begin_idx
+                for match in re.finditer("\S+", sentence):
+                    start = match.start()
+                    end = match.end()
+                    pointer = sent_offset + start
+                    word = match.group(0)
+                    train_file.write(word + "\t")
+                    answer = "0"
+                    for entity in entity_set:
+                        if answer != "0":
+                            break
+                        if entity.is_substance_abuse():
+                            attr_dict = entity.dict_of_attribs
+                            for attr in attr_dict:
+                                if attr_dict[attr].type == type and \
+                                   int(attr_dict[attr].span_begin) <= pointer <\
+                                   int(attr_dict[attr].span_end):
+                                    answer = type
+                                    break
+                    train_file.write(answer + "\n")
+
     train_file.close()
 
 

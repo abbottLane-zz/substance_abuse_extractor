@@ -81,4 +81,5 @@ for key in training_documents.keys():
 ##################################
 
 # Train
-EntityExtractor.train(training_doc_objs)
+# EntityExtractor.train(training_doc_objs)
+EntityExtractor.test(testing_doc_objs)
