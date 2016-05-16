@@ -96,9 +96,9 @@ def create_train_file(training_doc_objs, train_file_name, type):
         doc_obj = training_doc_objs[doc]
         for sent_obj in doc_obj.get_sentence_obj_list():
 
-            # #Debug print:
-            # if "No history of recreational drug use." in sent_obj.sentence:
-            #     test = 0
+            #Debug print:
+            if "2 to 3 packets per day for at least" in sent_obj.sentence:
+                test = 0
 
             if sent_obj.has_substance_abuse_entity():
                 sentence = sent_obj.sentence
@@ -112,7 +112,7 @@ def create_train_file(training_doc_objs, train_file_name, type):
                     end = match.end()
                     pointer = sent_offset + start
                     word = match.group(0)
-                    train_file.write(word)
+                    train_file.write(word.rstrip(",.:;"))
                     # Debug line
                     # train_file.write("[" + str(pointer) + "," + str(sent_offset + match.end()) + "]")
                     train_file.write("\t")
