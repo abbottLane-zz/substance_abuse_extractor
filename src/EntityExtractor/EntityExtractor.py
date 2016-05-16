@@ -42,10 +42,10 @@ def classify(training_doc_objs,
              test_file_name="test-file.tsv",
              train_script_name="train_model.sh",
              test_script_name="test_classify.sh"):
-    '''
-    This classifies.
+    """
+    This function is currently not used.
     :return: list of sent_objs with attributes filled
-    '''
+    """
     global features
     create_train_file(training_doc_objs, train_file_name)
     create_prop_file(prop_file_name, train_file_name, features, model_name)
@@ -87,34 +87,58 @@ def train_model(stanford_ner_path, prop_file_name, train_script_name):
 
 
 def create_train_file(training_doc_objs, train_file_name, type):
+    """
+    Sorry about the crazy embedded FOR loops and indents.
+    I will modularize better to make it prettier.
+    """
     train_file = open(train_file_name, 'w')
     for doc in training_doc_objs:
         doc_obj = training_doc_objs[doc]
         for sent_obj in doc_obj.get_sentence_obj_list():
             if sent_obj.has_substance_abuse_entity():
                 sentence = sent_obj.sentence
+                # Debug lines
+                # train_file.write(doc + "\n")
+                # train_file.write(sentence + "\n")
                 entity_set = sent_obj.set_entities
                 sent_offset = sent_obj.begin_idx
                 for match in re.finditer("\S+", sentence):
                     start = match.start()
+                    end = match.end()
                     pointer = sent_offset + start
                     word = match.group(0)
-                    train_file.write(word + "[" + str(pointer) + "," + str(sent_offset + match.end()) + "]" + "\t")
+                    train_file.write(word)
+                    # Debug line
+                    # train_file.write("[" + str(pointer) + "," + str(sent_offset + match.end()) + "]")
+                    train_file.write("\t")
                     answer = "0"
+                    debug_str = ""
                     for entity in entity_set:
                         if answer != "0":
                             break
                         if entity.is_substance_abuse():
                             attr_dict = entity.dict_of_attribs
                             for attr in attr_dict:
+                                attr_start = int(attr_dict[attr].span_begin)
+                                attr_end = int(attr_dict[attr].span_end)
                                 if attr_dict[attr].type == type and \
-                                   int(attr_dict[attr].span_begin) <= pointer <\
-                                   int(attr_dict[attr].span_end):
-                                    answer = type + "\t" + attr_dict[attr].text +\
-                                             "[" + attr_dict[attr].span_begin +\
-                                             "," + attr_dict[attr].span_end + "]"
+                                   attr_start <= pointer < attr_end:
+                                    answer = type
+                                    # Debug lines
+                                    # answer += "\t" + attr_dict[attr].text +\
+                                    #          "[" + str(attr_start) +\
+                                    #          "," + str(attr_end) + "]"
+                                    debug_str = "--- Sent obj start index: " + str(sent_offset) + "\n" + \
+                                                "--- Match obj start index: " + str(start) + "\n" + \
+                                                "--- Match obj end index: " + str(end) + "\n" + \
+                                                "--- Pointer index: " + str(sent_offset) + " + " + \
+                                                str(start) + " = " + str(pointer) + "\n" + \
+                                                "--- Attr start index: " + str(attr_start) + "\n" + \
+                                                "--- Attr end index: " + str(attr_end) + "\n"
                                     break
                     train_file.write(answer + "\n")
+                    # Debug line
+                    # train_file.write(debug_str)
 
     train_file.close()
 

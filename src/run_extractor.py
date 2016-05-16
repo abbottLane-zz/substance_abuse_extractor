@@ -3,8 +3,8 @@ from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from DataLoader.DataLoader import DataLoader
 from DataLoader.AnnotationDoc import AnnotationDoc
 from DataLoader.Document import  Document
-# from Classification import Classifier
-# from Classification import Globals
+from Classification import Classifier
+from Classification import Globals
 from EntityExtractor import EntityExtractor
 
 
@@ -62,24 +62,30 @@ for key in training_documents.keys():
 ########################################
 
 # Train classifiers
-# training_feat_extractor = FeatureExtractor(training_doc_objs)
-# classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
-#
-# # Classify sentences
-# testing_feat_extractor = FeatureExtractor(testing_doc_objs)
-# sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
-#
-# # How to use:
-# print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
-# print("Sentence Objects with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
-#
-# results_file = "classifier_results.txt"
-# sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
+training_feat_extractor = FeatureExtractor(training_doc_objs)
+classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
+
+# Classify sentences
+testing_feat_extractor = FeatureExtractor(testing_doc_objs)
+sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
+
+# How to use:
+print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
+print("Sentence Objects with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
+
+results_file = "classifier_results.txt"
+sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
 
 ##################################
 #### EXTRACTION PIPELINE #########
 ##################################
 
 # Train
-EntityExtractor.train(training_doc_objs)
-# EntityExtractor.test(testing_doc_objs)
+# NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
+EntityExtractor.train(training_doc_objs, stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar")
+
+# Test
+#   (Currently uses gold standard for choosing substance abuse sentences instead
+#   of classification due to local issues with scipy; I will change this soon)
+# NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
+EntityExtractor.test(testing_doc_objs, stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar")
