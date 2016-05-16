@@ -20,14 +20,14 @@ class Document:
             if sentence != "\n":
 
                 #debug
-                # if self.id == "85_Consult-HistoryandPhy.-Consult-AbnormalEKG_10":
-                #     pause = 0
+                if self.id == "288_Consult-HistoryandPhy.-KneeDJD-Consult_11":
+                    pause = 0
 
                 sentence = sentence.rstrip()
                 start_idx = current_length
                 end_idx = current_length + len(sentence)
                 sent_objs.append(Sentence(sentence, start_idx, end_idx))
-            current_length = end_idx +1
+                current_length = end_idx +1
         # Annotations have to be added to sentence objs. Use the set_annotations method below to do that
         return sent_objs
 
