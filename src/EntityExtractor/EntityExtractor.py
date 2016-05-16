@@ -97,8 +97,8 @@ def create_train_file(training_doc_objs, train_file_name, type):
         for sent_obj in doc_obj.get_sentence_obj_list():
 
             #Debug print:
-            if "2 to 3 packets per day for at least" in sent_obj.sentence:
-                test = 0
+            # if "2 to 3 packets per day for at least" in sent_obj.sentence:
+            #     test = 0
 
             if sent_obj.has_substance_abuse_entity():
                 sentence = sent_obj.sentence
