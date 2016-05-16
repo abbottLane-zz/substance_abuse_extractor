@@ -15,6 +15,8 @@ class Document:
         current_length = 0
 
         for sentence in sentences_text_list:
+            if sentence == "\n":
+                current_length = current_length +1
             if sentence != "\n":
 
                 #debug

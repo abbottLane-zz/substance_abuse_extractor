@@ -144,7 +144,7 @@ def create_train_file(training_doc_objs, train_file_name, type):
                     train_file.write(answer + "\n")
                     # Debug line
                     #train_file.write(debug_str)
-                    #print(debug_str)
+                    print(debug_str)
 
     train_file.close()
 
