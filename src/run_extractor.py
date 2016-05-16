@@ -82,10 +82,10 @@ sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
 
 # Train
 # NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
-EntityExtractor.train(training_doc_objs, stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar")
+EntityExtractor.train(training_doc_objs, stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar")
 
 # Test
 #   (Currently uses gold standard for choosing substance abuse sentences instead
 #   of classification due to local issues with scipy; I will change this soon)
 # NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
-EntityExtractor.test(testing_doc_objs, stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar")
+EntityExtractor.test(testing_doc_objs, stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar")

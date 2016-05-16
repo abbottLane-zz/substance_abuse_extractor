@@ -12,14 +12,20 @@ class Document:
 
     def create_sentence_objs(self, sentences_text_list):
         sent_objs = list()
-        current_length = 1
+        current_length = 0
+
         for sentence in sentences_text_list:
             if sentence != "\n":
+
+                #debug
+                # if self.id == "85_Consult-HistoryandPhy.-Consult-AbnormalEKG_10":
+                #     pause = 0
+
                 sentence = sentence.rstrip()
                 start_idx = current_length
                 end_idx = current_length + len(sentence)
                 sent_objs.append(Sentence(sentence, start_idx, end_idx))
-            current_length = end_idx
+            current_length = end_idx +1
         # Annotations have to be added to sentence objs. Use the set_annotations method below to do that
         return sent_objs
 

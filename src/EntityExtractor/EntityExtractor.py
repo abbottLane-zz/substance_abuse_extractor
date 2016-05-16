@@ -95,6 +95,11 @@ def create_train_file(training_doc_objs, train_file_name, type):
     for doc in training_doc_objs:
         doc_obj = training_doc_objs[doc]
         for sent_obj in doc_obj.get_sentence_obj_list():
+
+            # #Debug print:
+            # if "No history of recreational drug use." in sent_obj.sentence:
+            #     test = 0
+
             if sent_obj.has_substance_abuse_entity():
                 sentence = sent_obj.sentence
                 # Debug lines
@@ -138,7 +143,8 @@ def create_train_file(training_doc_objs, train_file_name, type):
                                     break
                     train_file.write(answer + "\n")
                     # Debug line
-                    # train_file.write(debug_str)
+                    #train_file.write(debug_str)
+                    #print(debug_str)
 
     train_file.close()
 
