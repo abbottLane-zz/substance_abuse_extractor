@@ -6,6 +6,7 @@ from DataLoader.Document import  Document
 from Classification import Classifier
 from Classification import Globals
 from EntityExtractor import EntityExtractor
+from Classification import  StatusClassifier
 
 
 def get_test_fold(folds_data, test_fold_num):
@@ -63,11 +64,14 @@ for key in training_documents.keys():
 
 # Train classifiers
 training_feat_extractor = FeatureExtractor(training_doc_objs)
-classifiers, feature_maps = Classifier.train_models(training_feat_extractor)
+classifiers, feature_maps, sent_info = Classifier.train_models(training_feat_extractor)
 
-# Classify sentences
+# Classify sentences - Substance abuse general, and abuse type classifications
 testing_feat_extractor = FeatureExtractor(testing_doc_objs)
 sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
+
+# Train and classify status
+status_classifier, status_feat_map = StatusClassifier.train_status_classifiers(sent_classification_info)
 
 # How to use:
 print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
