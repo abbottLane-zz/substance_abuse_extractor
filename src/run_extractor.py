@@ -30,7 +30,7 @@ def get_test_fold(folds_data, test_fold_num):
 ##################################
 
 # load folds data
-TEST_FOLD = 4
+TEST_FOLD = 3
 with open("../Data/folds.out") as file:
    folds_data = file.readlines()
 test_set = get_test_fold(folds_data, TEST_FOLD)
@@ -59,7 +59,7 @@ for key in training_documents.keys():
 
 
 ##########################################
-#### SENTENCE TRAINING PIPELINE #########
+#### EVENT CLASSIFICATION       #########
 ########################################
 
 # Train classifiers
@@ -70,15 +70,23 @@ classifiers, feature_maps, sent_info = Classifier.train_models(training_feat_ext
 testing_feat_extractor = FeatureExtractor(testing_doc_objs)
 sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
 
-# Train and classify status
-status_classifier, status_feat_map = StatusClassifier.train_status_classifiers(sent_classification_info)
-
 # How to use:
 print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
 print("Sentence Objects with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
 
 results_file = "classifier_results.txt"
 sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
+
+########################################
+####   STATUS CLASSIFICATION ##########
+######################################
+
+# Train status
+status_classifiers, status_feat_maps, feats_dicts = StatusClassifier.train_status_classifiers(sent_classification_info)
+
+# Classify status
+status_classification_info = StatusClassifier.get_classifications(status_classifiers, status_feat_maps, feats_dicts, testing_feat_extractor)
+
 
 ##################################
 #### EXTRACTION PIPELINE #########
