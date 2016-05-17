@@ -20,8 +20,8 @@ class Document:
             if sentence != "\n":
 
                 #debug
-                if self.id == "288_Consult-HistoryandPhy.-KneeDJD-Consult_11":
-                    pause = 0
+                # if "According to the chart," in sentence:
+                #     holdit = 9
 
                 sentence = sentence.rstrip()
                 start_idx = current_length

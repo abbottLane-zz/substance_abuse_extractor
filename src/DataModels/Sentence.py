@@ -11,6 +11,14 @@ class Sentence:
         self.set_entities.add(entity)
         pass
 
+    def get_status_label_and_evidence(self, type):
+        for ent in self.set_entities:
+            if ent.type == type:
+                for attrib in ent.dict_of_attribs.values():
+                    if attrib.type == "Status":
+                        return attrib.a_attrib.status, attrib.text
+        return "no status found", "evidence unavailable"
+
     def has_entity(self):
         if len(self.set_entities) == 0:
             return False
