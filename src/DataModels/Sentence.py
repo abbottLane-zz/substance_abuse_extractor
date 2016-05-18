@@ -20,6 +20,12 @@ class Sentence:
                         return attrib.a_attrib.status, attrib.text
         return "no status found", "evidence unavailable"
 
+    def get_event_by_type(self, type):
+        for event in self.set_entities:
+            if event.type == type:
+                return event
+        return None
+
     def has_entity(self):
         if len(self.set_entities) == 0:
             return False

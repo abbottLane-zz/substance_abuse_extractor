@@ -11,6 +11,11 @@ class Entity:
         for attrib_key in self.dict_of_attribs:
             idxs.append(self.dict_of_attribs[attrib_key].span_begin)
         return idxs
+    def get_status(self):
+        for attrib in self.dict_of_attribs.values():
+            if attrib.type == "Status":
+                return attrib.a_attrib.status
+        return None
 
     def is_substance_abuse(self):
         if self.type in Globals.SPECIFIC_CLASSIFIER_TYPES:

@@ -10,8 +10,8 @@ class SentInfo:
 
         # Structure of sent_lists -- {classifier : set of {indices of sentences classified as such}}
         self.gold_classf_sent_lists = classified_sent_lists  # positive sents for each classification - gold labels
-        self.predicted_classf_sent_lists = {}                # positive sents for each classf         - our system
-
+        self.predicted_classf_sent_lists = {}                # positive sents for each classf         - our syste# m
+        self.predicted_status = {}
     # Returns the dicts of sentence features relevant to a particular classifier
     def gold_sent_feats(self, classifier_type):
         sent_indices = []
@@ -59,6 +59,17 @@ class SentInfo:
     def get_sentences_w_info(self, classifier_type):
         sents = [self.sent_objs[index] for index in self.predicted_classf_sent_lists[classifier_type]]
         return sents
+
+    def get_gold_sentences_w_info(self, classifier_type):
+        sents = [self.sent_objs[index] for index in self.gold_classf_sent_lists[classifier_type]]
+        return sents
+    def get_gold_indexes_w_info(self, classifier_type):
+        idxs = [index for index in self.gold_classf_sent_lists[classifier_type]]
+        return idxs
+
+    def get_indexes_w_info(self, classifier_type):
+        idxs = [index for index in self.predicted_classf_sent_lists[classifier_type]]
+        return idxs
 
     def evaluate_classifications(self, results_file, test_fold):
         misclass_sents = {}

@@ -1,12 +1,9 @@
-import pprint
-from FeatureExtractor.FeatureExtractor import FeatureExtractor
-from DataLoader.DataLoader import DataLoader
-from DataLoader.AnnotationDoc import AnnotationDoc
-from DataLoader.Document import  Document
 from Classification import Classifier
 from Classification import Globals
+from DataLoader.DataLoader import DataLoader
 from EntityExtractor import EntityExtractor
-from Classification import  StatusClassifier
+from FeatureExtractor.FeatureExtractor import FeatureExtractor
+from StatusClassification import StatusClassifier
 
 
 def get_test_fold(folds_data, test_fold_num):
@@ -80,17 +77,17 @@ sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
 ########################################
 ####   STATUS CLASSIFICATION ##########
 ######################################
-
-# Classify the training data to use as input to Status training
-training_classify_fe = FeatureExtractor(training_doc_objs)
-training_sent_classified_info = Classifier.get_classifications(classifiers, feature_maps, training_classify_fe)
+training_input = sent_info
+testing_input = sent_classification_info
 
 # Train status
-status_classifiers, status_feat_maps, feats_dicts = StatusClassifier.train_status_classifiers(training_sent_classified_info)
+status_classifiers, status_feat_maps, feats_dicts = StatusClassifier.train_status_classifiers(training_input)
 
 # Classify status
-status_classification_info = StatusClassifier.get_classifications(status_classifiers, status_feat_maps, feats_dicts, testing_feat_extractor)
+status_classification_info = StatusClassifier.get_classifications(status_classifiers, status_feat_maps, feats_dicts, testing_input)
 
+status_result_file = "status_results.txt"
+StatusClassifier.evaluate_status_classification(status_classification_info, status_result_file, TEST_FOLD)
 
 ##################################
 #### EXTRACTION PIPELINE #########

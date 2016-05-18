@@ -1,10 +1,10 @@
-CRFClassifier invoked on Mon May 16 12:51:53 PDT 2016 with arguments:
+CRFClassifier invoked on Wed May 18 14:29:49 PDT 2016 with arguments:
    -loadClassifier EntityExtractor/Models/model-Status.ser.gz -testFile EntityExtractor/Test-Files/test-Status.tsv
 testFile=EntityExtractor/Test-Files/test-Status.tsv
 loadClassifier=EntityExtractor/Models/model-Status.ser.gz
-Loading classifier from /home/wlane/compling/biomed-nlp-575/substance_abuse_extractor/src/EntityExtractor/Models/model-Status.ser.gz ... done [0.3 sec].
-CRFClassifier tagged 804 words in 1 documents at 2429.00 words per second.
+Loading classifier from /home/wlane/compling/biomed-nlp-575/substance_abuse_extractor/src/EntityExtractor/Models/model-Status.ser.gz ... done [0.2 sec].
+CRFClassifier tagged 920 words in 1 documents at 3709.68 words per second.
          Entity	P	R	F1	TP	FP	FN
-              0	0.5375	0.4624	0.4971	43	37	50
-         Status	0.6962	0.5978	0.6433	55	24	37
-         Totals	0.6164	0.5297	0.5698	98	61	87
+              0	0.5102	0.5208	0.5155	50	48	46
+         Status	0.6837	0.6979	0.6907	67	31	29
+         Totals	0.5969	0.6094	0.6031	117	79	75
