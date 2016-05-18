@@ -81,8 +81,12 @@ sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
 ####   STATUS CLASSIFICATION ##########
 ######################################
 
+# Classify the training data to use as input to Status training
+training_classify_fe = FeatureExtractor(training_doc_objs)
+training_sent_classified_info = Classifier.get_classifications(classifiers, feature_maps, training_classify_fe)
+
 # Train status
-status_classifiers, status_feat_maps, feats_dicts = StatusClassifier.train_status_classifiers(sent_classification_info)
+status_classifiers, status_feat_maps, feats_dicts = StatusClassifier.train_status_classifiers(training_sent_classified_info)
 
 # Classify status
 status_classification_info = StatusClassifier.get_classifications(status_classifiers, status_feat_maps, feats_dicts, testing_feat_extractor)

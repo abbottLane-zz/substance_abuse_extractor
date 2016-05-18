@@ -6,6 +6,7 @@ class Sentence:
         self.begin_idx = begin_idx
         self.end_idx = end_idx
         self.set_entities = set()
+        self.labeled_type = None
 
     def add_entity(self, entity):
         self.set_entities.add(entity)
@@ -30,6 +31,9 @@ class Sentence:
             if entity.type in Globals.SPECIFIC_CLASSIFIER_TYPES:
                 return True
         return False
+
+    def set_labeled_type(self, type):
+        self.labeled_type = type
 
     def has_specific_abuse_entity(self, classification_type):
         for entity in self.set_entities:
