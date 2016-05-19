@@ -117,7 +117,7 @@ def classify(classifier, classifier_type, feature_map, sent_info):
 
 def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
     out_file = open(status_result_file, "w")
-    out_file.write("\nStatus Classifier Evaluation, tested on fold" + str(TEST_FOLD) + "\n------------------------\n")
+    out_file.write("\nStatus Classifier Evaluation, tested on fold " + str(TEST_FOLD) + "\n------------------------\n")
 
     for type in status_info.predicted_status:
         gold_sentences = status_info.get_gold_sentences_w_info(type)
@@ -130,25 +130,30 @@ def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
             full_list_idx_to_predicted_status[predicted_indexes[idx]] = status
 
         out_file.write("\n\n" + type + " sentences :: predicted status\n")
+        # Accuracy
+        total = 0
+        right = 0
         for idx, sent in enumerate(status_info.sent_objs):
             if idx in predicted_indexes: # If the global list found something we tried to predict for
+                total += 1
                 out_file.write("\n\t" + sent.sentence)
                 gold_entity = sent.get_event_by_type(type)
                 if gold_entity != None:
                     gold_status = gold_entity.get_status()
+                    pred_status = full_list_idx_to_predicted_status[idx]
+                    if gold_status == pred_status:
+                        right += 1
                     out_file.write("\n\t\tACTUAL: " + str(gold_status))
-                    out_file.write("\n\t\tPREDICTED: " + full_list_idx_to_predicted_status[idx])
+                    out_file.write("\n\t\tPREDICTED: " + pred_status)
                 else:
                     out_file.write("\n\t\tAttempted to predict for a label not in the gold set")
 
-
+        out_file.write("\n" + type + " ACCURACY: " + str(float(right)/float(total)) + "\n")
         #
         # for idx, predicted_label in enumerate(status_info.predicted_status[status]):
         #     out_file.write("\t" + str(gold_indexes[idx]) + "-" + gold_sentences[idx].sentence +" :: "+ predicted_label + "\n")
 
-        # Accuracy
-        total = 0
-        right = 0
+
 
 
 
