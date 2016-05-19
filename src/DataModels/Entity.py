@@ -15,7 +15,7 @@ class Entity:
         for attrib in self.dict_of_attribs.values():
             if attrib.type == "Status":
                 return attrib.a_attrib.status
-        return None
+        return "unknown"
 
     def is_substance_abuse(self):
         if self.type in Globals.SPECIFIC_CLASSIFIER_TYPES:

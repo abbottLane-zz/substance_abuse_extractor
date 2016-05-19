@@ -143,10 +143,19 @@ def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
                     pred_status = full_list_idx_to_predicted_status[idx]
                     if gold_status == pred_status:
                         right += 1
+
+                    # debug
+                    if gold_status == None:
+                        stop = 0
+                        gold_status = gold_entity.get_status()
+
+
                     out_file.write("\n\t\tACTUAL: " + str(gold_status))
                     out_file.write("\n\t\tPREDICTED: " + pred_status)
                 else:
+                    pred_status = full_list_idx_to_predicted_status[idx]
                     out_file.write("\n\t\tAttempted to predict for a label not in the gold set")
+                    out_file.write("\n\t\tPREDICTED: " + pred_status)
 
         out_file.write("\n" + type + " ACCURACY: " + str(float(right)/float(total)) + "\n")
         #
