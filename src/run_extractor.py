@@ -73,7 +73,7 @@ sent_classification_info = Classifier.get_classifications(classifiers, feature_m
 print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
 print("Sentence Objects with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
 
-results_file = "classifier_results.txt"
+results_file = Globals.CLASSF_EVAL_FILE
 sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
 
 ##################################

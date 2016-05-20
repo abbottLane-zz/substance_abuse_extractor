@@ -1,3 +1,6 @@
+# Files
+CLASSF_EVAL_FILE = "classifier_results.txt"
+
 # Classifier Types
 SUBSTANCE = "SUBSTANCE"
 ALCOHOL = "Alcohol"
