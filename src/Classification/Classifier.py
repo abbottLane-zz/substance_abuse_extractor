@@ -1,10 +1,12 @@
-import numpy as np
-from sklearn.svm import LinearSVC
-from sklearn.feature_extraction import DictVectorizer
 import re
 import string
-from Classification import Globals
+
+import numpy as np
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.svm import LinearSVC
+
 from Classification import SentInfo
+from DataLoader import Globals
 
 
 def train_models(feature_extractor):
@@ -14,7 +16,8 @@ def train_models(feature_extractor):
     sent_info = __sentences_and_labels(feature_extractor)
 
     # General Substance Classifier
-    subst_classifier, subst_feat_map = train_model(sent_info.sent_features, sent_info.get_substance_labels(Globals.SUBSTANCE))
+    subst_classifier, subst_feat_map = train_model(sent_info.sent_features, sent_info.get_substance_labels(
+        Globals.SUBSTANCE))
     classifiers[Globals.SUBSTANCE] = subst_classifier
     feat_maps[Globals.SUBSTANCE] = subst_feat_map
 
@@ -45,7 +48,7 @@ def get_classifications(classifiers, feat_maps, feat_extractor):
 
     # Classify Substance
     sent_info = classify(classifiers[Globals.SUBSTANCE], Globals.SUBSTANCE,
-                            feat_maps[Globals.SUBSTANCE], sent_info)
+                         feat_maps[Globals.SUBSTANCE], sent_info)
 
     # Specific classifications
     for classf in classifiers:

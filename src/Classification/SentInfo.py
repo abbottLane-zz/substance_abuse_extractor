@@ -1,4 +1,4 @@
-from Classification import Globals
+from DataLoader import Globals
 
 
 class SentInfo:

@@ -1,5 +1,4 @@
-from FeatureExtractor.FeatureExtractor import FeatureExtractor
-from Classification import Globals
+from DataLoader import Globals as g
 import subprocess
 # from nltk.tag import StanfordNERTagger
 import re
@@ -24,13 +23,13 @@ features = [
 ]
 
 entity_types = [
-    "Status",
-    "Temporal",
-    "Method",
-    "Type",
-    "Amount",
-    "Frequency",
-    "History"
+    g.STATUS,
+    g.TEMPORAL,
+    g.METHOD,
+    g.TYPE,
+    g.AMOUNT,
+    g.FREQ,
+    g.HISTORY
 ]
 
 

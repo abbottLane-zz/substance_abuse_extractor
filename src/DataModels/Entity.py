@@ -1,4 +1,5 @@
-from Classification import Globals
+from DataLoader import Globals
+
 
 class Entity:
     def __init__(self, tag, dict_of_attribs, type):

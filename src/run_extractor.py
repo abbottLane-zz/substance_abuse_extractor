@@ -1,11 +1,8 @@
-import pprint
-from FeatureExtractor.FeatureExtractor import FeatureExtractor
-from DataLoader.DataLoader import DataLoader
-from DataLoader.AnnotationDoc import AnnotationDoc
-from DataLoader.Document import  Document
 from Classification import Classifier
-from Classification import Globals
+from DataLoader import Globals
+from DataLoader.DataLoader import DataLoader
 from EntityExtractor import EntityExtractor
+from FeatureExtractor.FeatureExtractor import FeatureExtractor
 
 
 def get_test_fold(folds_data, test_fold_num):
@@ -70,7 +67,8 @@ testing_feat_extractor = FeatureExtractor(testing_doc_objs)
 sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
 
 # How to use:
-print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.SUBSTANCE)))
+print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(
+    Globals.SUBSTANCE)))
 print("Sentence Objects with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
 
 results_file = Globals.CLASSF_EVAL_FILE

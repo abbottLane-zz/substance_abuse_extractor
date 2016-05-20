@@ -17,3 +17,18 @@ NUMBER = "NUMBER"
 DECIMAL = "DECIMAL"
 MONEY = "MONEY"
 PERCENT = "PERCENT"
+
+# Status values
+NONE = "none"
+UNKNOWN = "unknown"
+PAST = "past"
+CURRENT = "current"
+
+# Attribute types
+STATUS = "Status"
+TEMPORAL = "Temporal"
+METHOD = "Method"
+TYPE = "Type"
+AMOUNT = "Amount"
+FREQ = "Frequency"
+HISTORY = "History"

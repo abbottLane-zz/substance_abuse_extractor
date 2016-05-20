@@ -1,4 +1,5 @@
-from Classification import Globals
+from DataLoader import Globals
+
 
 class Sentence:
     def __init__(self, sentence, begin_idx, end_idx):
