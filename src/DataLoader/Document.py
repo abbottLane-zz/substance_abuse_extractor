@@ -19,9 +19,9 @@ class Document:
                 current_length = current_length +1
             if sentence != "\n":
 
-                # #debug: This is where you put text from a doc you want to check on
-                # if "She denies any significant tobacco, alcohol or illicit drugs." in sentence:
-                #     print("DOCUMENT TO CHECK: " + self.get_id())
+                #debug: This is where you put text from a doc you want to check on
+                if "Remarkable for being married, retired, quit smoking in 1997, rare use of alcohol, lives locally with his wife." in sentence:
+                    print("DOCUMENT TO CHECK: " + self.get_id())
 
                 sentence = sentence.rstrip()
                 start_idx = current_length

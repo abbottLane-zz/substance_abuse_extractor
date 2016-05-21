@@ -120,21 +120,27 @@ def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
     out_file.write("\nStatus Classifier Evaluation, tested on fold " + str(TEST_FOLD) + "\n------------------------\n")
 
     out_file.write("PRECISION: ")
+    total_prec_total=0
+    total_prec_right=0
     for type in Globals.SPECIFIC_CLASSIFIER_TYPES:
         # Precision
         total = 0
         right = 0
         for sent in status_info.predicted_sent_objs_by_type[type]:
-            #out_file.write("\n\t" + sent.sentence)
             for event in sent.set_entities:
                 if event.type == type:
+                    #out_file.write("\n\t" + sent.sentence)
                     #out_file.write("\n\t\tACTUAL: " + event.get_status())
                     #out_file.write("\n\t\tPREDICTED: " + event.get_predicted_status())
                     if event.get_status() == event.get_predicted_status():
                         right += 1
+                        total_prec_right+=1
                     total +=1
+                    total_prec_total+=1
         out_file.write("\n" + type + " " + str(float(right)/float(total)))
     out_file.write("\n\nRECALL:")
+    total_rec_total=0
+    total_rec_right=0
     for type in Globals.SPECIFIC_CLASSIFIER_TYPES:
         # recall
         total = 0
@@ -147,8 +153,12 @@ def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
                     #out_file.write("\n\t\tPREDICTED: " + event.get_predicted_status())
                     if event.get_status() == event.get_predicted_status():
                         right += 1
+                        total_rec_right+=1
                     total +=1
+                    total_rec_total+=1
         out_file.write("\n" + type +" " + str(float(right)/float(total)))
+    out_file.write("\n\n\nTOTAL PRECISION:" + str(float(total_prec_right) / float(total_prec_total)))
+    out_file.write("\nTOTAL RECALL:" + str(float(total_rec_right) / float(total_rec_total)))
 
 
 
