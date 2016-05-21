@@ -18,7 +18,7 @@ class Sentence:
                 for attrib in ent.dict_of_attribs.values():
                     if attrib.type == "Status":
                         return attrib.a_attrib.status, attrib.text
-        return "no status found", "evidence unavailable"
+        return "unknown", "evidence unavailable"
 
     def get_event_by_type(self, type):
         for event in self.set_entities:
