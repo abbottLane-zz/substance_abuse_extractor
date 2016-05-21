@@ -119,8 +119,43 @@ def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
     out_file = open(status_result_file, "w")
     out_file.write("\nStatus Classifier Evaluation, tested on fold " + str(TEST_FOLD) + "\n------------------------\n")
 
+    out_file.write("PRECISION: ")
+    for type in Globals.SPECIFIC_CLASSIFIER_TYPES:
+        # Precision
+        total = 0
+        right = 0
+        for sent in status_info.predicted_sent_objs_by_type[type]:
+            #out_file.write("\n\t" + sent.sentence)
+            for event in sent.set_entities:
+                if event.type == type:
+                    #out_file.write("\n\t\tACTUAL: " + event.get_status())
+                    #out_file.write("\n\t\tPREDICTED: " + event.get_predicted_status())
+                    if event.get_status() == event.get_predicted_status():
+                        right += 1
+                    total +=1
+        out_file.write("\n" + type + " " + str(float(right)/float(total)))
+    out_file.write("\n\nRECALL:")
+    for type in Globals.SPECIFIC_CLASSIFIER_TYPES:
+        # recall
+        total = 0
+        right = 0
+        for sent in status_info.sent_objs:
+            #out_file.write("\n\t" + sent.sentence)
+            for event in sent.set_entities:
+                if event.type == type:
+                    #out_file.write("\n\t\tACTUAL: " + event.get_status())
+                    #out_file.write("\n\t\tPREDICTED: " + event.get_predicted_status())
+                    if event.get_status() == event.get_predicted_status():
+                        right += 1
+                    total +=1
+        out_file.write("\n" + type +" " + str(float(right)/float(total)))
+
+
+
+def finalize_classification_info_object(status_info):
+    predicted_sent_dict = {}
     for type in status_info.predicted_status:
-        gold_sentences = status_info.get_gold_sentences_w_info(type)
+        predicted_sent_dict[type]=list()
         predicted_indexes = status_info.get_indexes_w_info(type)
         predicted_status = status_info.predicted_status[type]
 
@@ -128,84 +163,17 @@ def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
         full_list_idx_to_predicted_status = dict()
         for idx, status in enumerate(predicted_status):
             full_list_idx_to_predicted_status[predicted_indexes[idx]] = status
-
-        out_file.write("\n\n" + type + " sentences :: predicted status\n")
-        # Accuracy
-        total = 0
-        right = 0
         for idx, sent in enumerate(status_info.sent_objs):
             if idx in predicted_indexes: # If the global list found something we tried to predict for
-                total += 1
-                out_file.write("\n\t" + sent.sentence)
-                gold_entity = sent.get_event_by_type(type)
-                if gold_entity != None:
-                    gold_status = gold_entity.get_status()
-                    pred_status = full_list_idx_to_predicted_status[idx]
-                    if gold_status == pred_status:
-                        right += 1
-
-                    # debug
-                    if gold_status == None:
-                        stop = 0
-                        gold_status = gold_entity.get_status()
-
-
-                    out_file.write("\n\t\tACTUAL: " + str(gold_status))
-                    out_file.write("\n\t\tPREDICTED: " + pred_status)
-                else:
-                    pred_status = full_list_idx_to_predicted_status[idx]
-                    out_file.write("\n\t\tAttempted to predict for a label not in the gold set")
-                    out_file.write("\n\t\tPREDICTED: " + pred_status)
-
-        out_file.write("\n" + type + " ACCURACY: " + str(float(right)/float(total)) + "\n")
-        #
-        # for idx, predicted_label in enumerate(status_info.predicted_status[status]):
-        #     out_file.write("\t" + str(gold_indexes[idx]) + "-" + gold_sentences[idx].sentence +" :: "+ predicted_label + "\n")
+                pred_status = full_list_idx_to_predicted_status[idx]
+                for event in sent.set_entities:
+                    event.set_predicted_type(type)
+                    event.set_predicted_status(pred_status)
+                predicted_sent_dict[type].append(sent)
+    # set the newly-created dict back into the sent_info obj
+    status_info.set_predicted_sent_dict(predicted_sent_dict)
+    return status_info
 
 
 
 
-
-    # for classf in status_info.
-    #     misclass_sents[classf] = {}
-    #
-    #     # Accuracy
-    #     total = 0
-    #     right = 0
-    #     for index, sent in enumerate(self.original_sents):
-    #         total += 1
-    #         if index in self.predicted_classf_sent_lists[classf] and index in self.gold_classf_sent_lists[classf]:
-    #             right += 1
-    #         elif index not in self.predicted_classf_sent_lists[classf] and index not in self.gold_classf_sent_lists[
-    #             classf]:
-    #             right += 1
-    #         else:
-    #             misclass_sents[classf][sent] = index in self.gold_classf_sent_lists[classf]
-    #     if total:
-    #         accuracy = right / total
-    #     else:
-    #         accuracy = 0
-    #
-    #     # Precision
-    #     n = len([c for c in self.predicted_classf_sent_lists[classf] if (c in self.gold_classf_sent_lists[classf])])
-    #     d = len(self.predicted_classf_sent_lists[classf])
-    #     if d:
-    #         precision = n / d
-    #     else:
-    #         precision = 0
-    #
-    #     # Recall
-    #     n = len([c for c in self.gold_classf_sent_lists[classf] if (c in self.predicted_classf_sent_lists[classf])])
-    #     d = len(self.gold_classf_sent_lists[classf])
-    #     if d:
-    #         recall = n / d
-    #     else:
-    #         recall = 0
-    #
-    #     # Output Results
-    #     out_file.write("\n<<< " + classf + " >>>\n\tAccuracy:\t" + str(accuracy) + "\n\tPrecision:\t" +
-    #                    str(precision) + "\n\tRecall:  \t" + str(recall) + "\nMislabeled Sentences:\n")
-    #
-    #     for sent in misclass_sents[classf]:
-    #         out_file.write(sent + "\n - Should be " + str(misclass_sents[classf][sent]) + "\n")
-    # return None

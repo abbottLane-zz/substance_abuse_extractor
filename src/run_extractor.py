@@ -86,7 +86,11 @@ status_classifiers, status_feat_maps, feats_dicts = StatusClassifier.train_statu
 # Classify status
 status_classification_info = StatusClassifier.get_classifications(status_classifiers, status_feat_maps, feats_dicts, testing_input)
 
+# Combine predicted type and status into status_classification_info
+status_classification_info = StatusClassifier.finalize_classification_info_object(status_classification_info)
+
 status_result_file = "status_results.txt"
+
 StatusClassifier.evaluate_status_classification(status_classification_info, status_result_file, TEST_FOLD)
 
 ##################################
