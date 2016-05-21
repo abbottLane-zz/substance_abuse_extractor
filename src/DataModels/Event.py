@@ -5,8 +5,8 @@ class Event:
         self.tag = tag
         self.dict_of_attribs = dict_of_attribs
         self.type = type
-        self.predictedType=None
-        self.predictedStatus=None
+        # self.predictedType=None
+        # self.predictedStatus=None
 
     def get_entity_begin_idxs(self):
         idxs = list()
@@ -25,13 +25,13 @@ class Event:
         else:
             return False
 
-    def set_predicted_type(self, type):
-        self.predictedType = type
-
-    def set_predicted_status(self, status):
-        self.predictedStatus = status
-
-    def get_predicted_status(self):
-        return self.predictedStatus
-    def get_predicted_type(self):
-        return self.predictedType
+    # def set_predicted_type(self, type):
+    #     self.predictedType = type
+    #
+    # def set_predicted_status(self, status):
+    #     self.predictedStatus = status
+    #
+    # def get_predicted_status(self):
+    #     return self.predictedStatus
+    # def get_predicted_type(self):
+    #     return self.predictedType

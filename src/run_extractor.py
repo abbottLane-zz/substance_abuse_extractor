@@ -27,7 +27,7 @@ def get_test_fold(folds_data, test_fold_num):
 ##################################
 
 # load folds data
-TEST_FOLD = 2
+TEST_FOLD = 1
 with open("../Data/folds.out") as file:
    folds_data = file.readlines()
 test_set = get_test_fold(folds_data, TEST_FOLD)
@@ -53,8 +53,18 @@ for key in training_documents.keys():
     else:
         training_doc_objs[document.get_id()] = document
 
-
-
+# Print testing data stats
+print("==== Testing Data Stats ====")
+count=0
+num_sents=0
+for doc in testing_doc_objs.values():
+    for sent in doc.sentence_obj_list:
+        num_sents+=1
+        for event in sent.set_entities:
+            if event.type in Globals.SPECIFIC_CLASSIFIER_TYPES:
+                count +=1
+print("NUMBER OF SUBSTANCE ABUSE EVENTS:"+ str(count))
+print("NUMBER OF SENTENCES: " + str(num_sents))
 ##########################################
 #### EVENT CLASSIFICATION       #########
 ########################################

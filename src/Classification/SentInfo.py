@@ -14,7 +14,7 @@ class SentInfo:
         self.predicted_status = {}
 
         #Final list of sentence objects for which our system made type and status predictions
-        self.predicted_sent_objs_by_type = {}         # List of predicted sent objs get set after status classification
+        self.predicted_event_objs_by_index = {}         # List of predicted event objs get set after status classification
 
     # Returns the dicts of sentence features relevant to a particular classifier
     def gold_sent_feats(self, classifier_type):
@@ -75,8 +75,17 @@ class SentInfo:
         idxs = [index for index in self.predicted_classf_sent_lists[classifier_type]]
         return idxs
 
-    def set_predicted_sent_dict(self, sent_dict):
-        self.predicted_sent_objs_by_type = sent_dict
+    def get_predicted_event_matching_gold_event(self, gold_event, idx):
+        if idx not in self.predicted_event_objs_by_index.keys():
+            return None
+        for event in self.predicted_event_objs_by_index[idx]:
+            if event.type == gold_event.type:
+                return event
+        return None
+
+
+    def set_predicted_event_dict(self, sent_dict):
+        self.predicted_event_objs_by_index = sent_dict
 
     def evaluate_classifications(self, results_file, test_fold):
         misclass_sents = {}

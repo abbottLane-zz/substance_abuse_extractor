@@ -1,11 +1,12 @@
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.svm import LinearSVC
-
+import copy
 from Classification import Globals
 from Classification import SentInfo
 from Classification.Classifier import __sentences_and_labels, __vectorize_data, __vectorize_test_sent, \
     __process_sentence
+from DataModels.PredictedEvent import PredictedEvent
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
 
 
@@ -115,73 +116,91 @@ def classify(classifier, classifier_type, feature_map, sent_info):
     return sent_info
 
 
+def print_exp_precision_recall_by_type(status_info, out_file, type):
+    # Write sentence classification info to out_file for debugging
+    out_file.write("+++++++++++++++++\n")
+    out_file.write("++++  TYPE: " + type + "++++\n")
+    out_file.write("+++++++++++++++++\n")
+    for event_list in status_info.predicted_event_objs_by_index.values():
+        for event in event_list:
+            if event.type == type:
+                gold_sentence = status_info.sent_objs[event.sent_obj_idx]
+                sentence = gold_sentence.sentence
+                for gold_event in gold_sentence.set_entities:
+                    if gold_event.type == type:
+                        actual = gold_event.get_status()
+                        predicted = event.status
+                        out_file.write(sentence + "\n")
+                        out_file.write("\tTYPE PREDICTION: " + event.type + "\n")
+                        out_file.write("\tTYPE ACTUAL: " + gold_event.type + "\n")
+                        out_file.write("\tSTATUS PREDICTION: " + predicted + "\n")
+                        out_file.write("\tSTATUS ACTUAL: " + actual+ "\n")
+
+    #RECALL - # correct 'type,status' pairs / all possible entities in gold of 'type'
+    total_type_events = 0
+    correct =0
+    for idx, sent in enumerate(status_info.sent_objs):
+        for gold_event in sent.set_entities:
+            if gold_event.type == type: # if Gold event is of the type we are currently calculating for
+                total_type_events += 1
+                predicted_event = status_info.get_predicted_event_matching_gold_event(gold_event, idx)    # fetch predicted event for current gold event
+                if predicted_event != None and predicted_event.type == gold_event.type and predicted_event.status == gold_event.get_status():
+                    correct+=1
+
+    #precision = tp / float(tp + fp)
+    recall = correct / float(total_type_events)
+
+
+    # Precision
+    total_events_predicted=0
+    correct = 0
+    for idx, event_list in enumerate(status_info.predicted_event_objs_by_index.values()):
+        for event in event_list:
+            if event.type == type:
+                gold_sentence = status_info.sent_objs[event.sent_obj_idx]
+                for gold_event in gold_sentence.set_entities:
+                    if gold_event.type == type:
+                        total_events_predicted += 1
+                        if event.type == gold_event.type and event.status == gold_event.get_status():
+                            correct +=1
+
+    precision=correct/total_events_predicted
+
+    print("==========" + type + "===========")
+    print("PRECISION:")
+    print(precision)
+    print("RECALL:")
+    print(recall)
+    print("============================\n")
+    pass
+
+
 def evaluate_status_classification(status_info, status_result_file, TEST_FOLD):
     out_file = open(status_result_file, "w")
     out_file.write("\nStatus Classifier Evaluation, tested on fold " + str(TEST_FOLD) + "\n------------------------\n")
 
-    out_file.write("PRECISION: ")
-    total_prec_total=0
-    total_prec_right=0
+    # FP/TP/FN Counts
     for type in Globals.SPECIFIC_CLASSIFIER_TYPES:
-        # Precision
-        total = 0
-        right = 0
-        for sent in status_info.predicted_sent_objs_by_type[type]:
-            for event in sent.set_entities:
-                if event.type == type:
-                    #out_file.write("\n\t" + sent.sentence)
-                    #out_file.write("\n\t\tACTUAL: " + event.get_status())
-                    #out_file.write("\n\t\tPREDICTED: " + event.get_predicted_status())
-                    if event.get_status() == event.get_predicted_status():
-                        right += 1
-                        total_prec_right+=1
-                    total +=1
-                    total_prec_total+=1
-        out_file.write("\n" + type + " " + str(float(right)/float(total)))
-    out_file.write("\n\nRECALL:")
-    total_rec_total=0
-    total_rec_right=0
-    for type in Globals.SPECIFIC_CLASSIFIER_TYPES:
-        # recall
-        total = 0
-        right = 0
-        for sent in status_info.sent_objs:
-            #out_file.write("\n\t" + sent.sentence)
-            for event in sent.set_entities:
-                if event.type == type:
-                    #out_file.write("\n\t\tACTUAL: " + event.get_status())
-                    #out_file.write("\n\t\tPREDICTED: " + event.get_predicted_status())
-                    if event.get_status() == event.get_predicted_status():
-                        right += 1
-                        total_rec_right+=1
-                    total +=1
-                    total_rec_total+=1
-        out_file.write("\n" + type +" " + str(float(right)/float(total)))
-    out_file.write("\n\n\nTOTAL PRECISION:" + str(float(total_prec_right) / float(total_prec_total)))
-    out_file.write("\nTOTAL RECALL:" + str(float(total_rec_right) / float(total_rec_total)))
-
+        print_exp_precision_recall_by_type(status_info, out_file, type)
 
 
 def finalize_classification_info_object(status_info):
-    predicted_sent_dict = {}
+    predicted_event_dict = {}
     for type in status_info.predicted_status:
-        predicted_sent_dict[type]=list()
         predicted_indexes = status_info.get_indexes_w_info(type)
         predicted_status = status_info.predicted_status[type]
 
-        # Build a dictionary of idx:status so when we run through the full test list of sentences, we can look up status by index
-        full_list_idx_to_predicted_status = dict()
-        for idx, status in enumerate(predicted_status):
-            full_list_idx_to_predicted_status[predicted_indexes[idx]] = status
-        for idx, sent in enumerate(status_info.sent_objs):
-            if idx in predicted_indexes: # If the global list found something we tried to predict for
-                pred_status = full_list_idx_to_predicted_status[idx]
-                for event in sent.set_entities:
-                    event.set_predicted_type(type)
-                    event.set_predicted_status(pred_status)
-                predicted_sent_dict[type].append(sent)
-    # set the newly-created dict back into the sent_info obj
-    status_info.set_predicted_sent_dict(predicted_sent_dict)
+        for idx, status in zip(predicted_indexes, predicted_status):
+            if idx not in predicted_event_dict.keys():
+                predicted_event_dict[idx] = list()
+            if idx in predicted_indexes:  # If the global list found something we tried to predict for
+                pred_status = status
+                sentence = status_info.sent_objs[idx]
+                pred_event = PredictedEvent(type, pred_status, sentence, idx)
+                predicted_event_dict[idx].append(pred_event)
+
+        # set the newly-created dict back into the sent_info obj
+        status_info.set_predicted_event_dict(predicted_event_dict)
     return status_info
 
 
