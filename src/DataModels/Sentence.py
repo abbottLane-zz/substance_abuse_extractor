@@ -32,7 +32,6 @@ class Sentence:
         return True
 
     def has_substance_abuse_entity(self):
-        #substance_abuse_entity_types = {Globals.ALCOHOL, Globals.TOBACCO, Globals.DRUGS}
         for entity in self.set_entities:
             if entity.type in Globals.SPECIFIC_CLASSIFIER_TYPES:
                 return True
