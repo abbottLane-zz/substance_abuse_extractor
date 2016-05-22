@@ -165,13 +165,12 @@ def print_exp_precision_recall_by_type(status_info, out_file, type):
                             correct +=1
 
     precision=correct/total_events_predicted
-
-    print("==========" + type + "===========")
+    print("==========" + type + " Status Classification ===========")
     print("PRECISION:")
     print(precision)
     print("RECALL:")
     print(recall)
-    print("============================\n")
+    print("=================================================\n")
     pass
 
 
