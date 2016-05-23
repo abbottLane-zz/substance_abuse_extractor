@@ -1,4 +1,4 @@
-from DataModels.Entity import Entity
+from DataModels.Event import Event
 from DataModels.TAttrib import TAttrib
 from DataModels.AAttrib import AAttrib
 
@@ -43,7 +43,7 @@ class AnnotationDoc:
                 attrib_obj = self.create_entity_attribute_object(attrib, attrib_dict)
                 entity_attrib_dict[attrib_obj.tag] = attrib_obj
 
-            entity_obj_list.append(Entity(Etag, entity_attrib_dict, entity[1].split(':')[0]))
+            entity_obj_list.append(Event(Etag, entity_attrib_dict, entity[1].split(':')[0]))
         return entity_obj_list
 
     def create_entity_attribute_object(self, attrib, attrib_dict):
