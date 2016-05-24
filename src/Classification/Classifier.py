@@ -28,7 +28,8 @@ def train_models(feature_extractor):
         classifiers[class_type] = classifier
         feat_maps[class_type] = feat_map
 
-    return classifiers, feat_maps
+
+    return classifiers, feat_maps, sent_info
 
 
 def train_model(proc_sents, labels):
@@ -194,3 +195,4 @@ def __process_sentence(sentence):
                 processed_grams.append(gram)
 
     return processed_grams
+

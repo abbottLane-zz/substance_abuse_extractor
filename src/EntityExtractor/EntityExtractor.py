@@ -34,7 +34,7 @@ entity_types = [
 
 
 def classify(training_doc_objs,
-             stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar",
+             stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
              train_file_name="train-file.tsv",
              prop_file_name="attr_extract.prop",
              model_name="ner-model.ser.gz",
@@ -53,7 +53,7 @@ def classify(training_doc_objs,
 
 
 def test(testing_doc_objs, path="EntityExtractor/",
-         stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar",
+         stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
          test_script_name="test_classify.sh"):
     global entity_types
     for type in entity_types:
@@ -64,7 +64,7 @@ def test(testing_doc_objs, path="EntityExtractor/",
 
 
 def train(training_doc_objs, path="EntityExtractor/",
-          stanford_ner_path="/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar",
+          stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
           train_script_name="train_model.sh"):
     global features
     global entity_types
@@ -160,7 +160,7 @@ def create_prop_file(prop_file_name, train_file_name, features, model_name):
 
 
 if __name__ == "__main__":
-    stanford_ner_path = "/Users/Martin/stanford-ner-2015-04-20/stanford-ner.jar"
+    stanford_ner_path = "/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar"
     # train_file_name = "jane-austen-emma-ch1.tsv"
     # train_file_name = "dummy-train.tsv"
     train_file_name = "dummer.tsv"
