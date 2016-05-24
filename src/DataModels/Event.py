@@ -1,4 +1,4 @@
-from Classification import Globals
+from DataLoader import Globals
 
 class Event:
     def __init__(self, tag, dict_of_attribs, type):

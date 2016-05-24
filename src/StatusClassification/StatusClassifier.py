@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.svm import LinearSVC
 import copy
-from Classification import Globals
+from DataLoader import Globals
 from Classification import SentInfo
 from Classification.Classifier import __sentences_and_labels, __vectorize_data, __vectorize_test_sent, \
     __process_sentence

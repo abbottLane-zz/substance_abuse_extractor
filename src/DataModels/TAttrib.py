@@ -1,4 +1,4 @@
-from Classification import Globals
+from DataLoader import Globals
 from DataModels.AAttrib import AAttrib
 
 
