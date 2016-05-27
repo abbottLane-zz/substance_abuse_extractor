@@ -1,5 +1,6 @@
 from DataLoader import Globals
 
+
 class Event:
     def __init__(self, tag, dict_of_attribs, type):
         self.tag = tag
@@ -13,6 +14,7 @@ class Event:
         for attrib_key in self.dict_of_attribs:
             idxs.append(self.dict_of_attribs[attrib_key].span_begin)
         return idxs
+
     def get_status(self):
         for attrib in self.dict_of_attribs.values():
             if attrib.type == "Status":
