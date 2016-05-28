@@ -2,19 +2,21 @@ from DataLoader import Globals
 
 
 class Sentence:
-    def __init__(self, sentence, begin_idx, end_idx):
+    def __init__(self,id, sentence, begin_idx, end_idx):
         self.sentence = sentence
         self.begin_idx = begin_idx
         self.end_idx = end_idx
-        self.attrib_list = []
+        self.set_entities = set()
+        self.id = id
         self.labeled_type = None
+        self.tok_sent_with_crf_predicted_attribs = dict()
 
     def add_entity(self, entity):
-        self.attrib_list.append(entity)
+        self.set_entities.add(entity)
         pass
 
     def get_status_label_and_evidence(self, type):
-        for ent in self.attrib_list:
+        for ent in self.set_entities:
             if ent.type == type:
                 for attrib in ent.dict_of_attribs.values():
                     if attrib.type == "Status":
@@ -22,18 +24,19 @@ class Sentence:
         return "unknown", "evidence unavailable"
 
     def get_event_by_type(self, type):
-        for event in self.attrib_list:
+        for event in self.set_entities:
             if event.type == type:
                 return event
         return None
 
     def has_entity(self):
-        if len(self.attrib_list) == 0:
+        if len(self.set_entities) == 0:
             return False
         return True
 
     def has_substance_abuse_entity(self):
-        for entity in self.attrib_list:
+        # Returns gold label authority on subs abuse presences
+        for entity in self.set_entities:
             if entity.type in Globals.SPECIFIC_CLASSIFIER_TYPES:
                 return True
         return False
@@ -42,7 +45,7 @@ class Sentence:
         self.labeled_type = type
 
     def has_specific_abuse_entity(self, classification_type):
-        for entity in self.attrib_list:
+        for entity in self.set_entities:
             if entity.type == classification_type:
                 return True
         return False

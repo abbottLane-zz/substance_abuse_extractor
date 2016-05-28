@@ -108,18 +108,32 @@ StatusClassifier.evaluate_status_classification(status_classification_info, stat
 #### ATTRIBUTE EXTRACTION PIPELINE #########
 ############################################
 
-# Train
 # NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
-# EntityExtractor.train(training_doc_objs, stanford_ner_path="/home/wlane/stanford-ner-2014-06-16/stanford-ner.jar")
+STAN_NER_DIR = "/home/wlane/compling/stanford-ner-2014-06-16/stanford-ner.jar"
+
+# Train
+EntityExtractor.train(training_doc_objs, stanford_ner_path=STAN_NER_DIR)
 
 # Test
-#   (Currently uses gold standard for choosing substance abuse sentences instead
-#   of classification due to local issues with scipy; I will change this soon)
-# NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
-# EntityExtractor.test(testing_doc_objs, stanford_ner_path="/home/wlane/stanford-ner-2014-06-16/stanford-ner.jar")
+EntityExtractor.test(status_classification_info, stanford_ner_path=STAN_NER_DIR)
 
+# DEBUG -- place breakpoint here, take a look at the status_classification object and make sure it has everything we need
+test = 0
 
-#####################################
-#### EVENT FILLING PIPELINE #########
-#####################################
-
+##################################################################
+#### PUTTING EXTRACTION AND STATUS PREDICTIONS TOGETHER #########
+################################################################
+# DATA FOR COMBINING ATTRIBUTES TO EVENTS:
+# Where do I find the CRF classification output?
+#   - status_classification.tok_sent_with_crf_classification
+#       - This contains a dictionary of {attrib_type:crf output}
+#           - attrib_type is in the domain {Temporal, Method, Type, Amount, History}
+#           - crf_output is a list of tuples: item1 is the token word, item 2 is the classification prediction
+#           -Example: {'History':[(stopped, 0), (smoking, 0), (four, History), (years, History), (ago, History)]}
+#
+# Where do I find Status Classification output?
+#   - status_classification.predicted_event_objs_by_index
+#       - This contains a dictionary of {index:list(PredictedEvent objects)}\
+#           - index is the index of the sentObj that contains 1 or more PredictedEvents
+#           - PredictedEvent is an object carrying all the info about the events we predicted for, and their status
+#

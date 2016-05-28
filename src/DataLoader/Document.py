@@ -3,8 +3,9 @@ from DataModels.Sentence import Sentence
 
 
 class Document:
-    def __init__(self, id, list_of_paragraphs):
+    def __init__(self,numeric_id, id, list_of_paragraphs):
         self.id = id
+        self.doc_num_id = numeric_id
         self.sentences_text_list = self.sent_segmentizer(list_of_paragraphs) #derive sentence list by segmentizing doc sentences
         self.original_text = self.rebuild_original_text() # Get original text so that spans are still accurate
         self.annotations = None
@@ -13,6 +14,7 @@ class Document:
     def create_sentence_objs(self, sentences_text_list):
         sent_objs = list()
         current_length = 0
+        sent_pos_id = 1
 
         for sentence in sentences_text_list:
             if sentence == "\n":
@@ -20,14 +22,15 @@ class Document:
             if sentence != "\n":
 
                 #debug: This is where you put text from a doc you want to check on
-                # if "Remarkable for being married, retired, quit smoking in 1997, rare use of alcohol, lives locally with his wife." in sentence:
+                # if "Negative for smoking and drinking" in sentence:
                 #     print("DOCUMENT TO CHECK: " + self.get_id())
 
                 sentence = sentence.rstrip()
                 start_idx = current_length
                 end_idx = current_length + len(sentence)
-                sent_objs.append(Sentence(sentence, start_idx, end_idx))
+                sent_objs.append(Sentence("D"+str(self.doc_num_id)+"-S"+str(sent_pos_id), sentence, start_idx, end_idx))
                 current_length = end_idx +1
+            sent_pos_id +=1
         # Annotations have to be added to sentence objs. Use the set_annotations method below to do that
         return sent_objs
 
