@@ -127,7 +127,7 @@ test = 0
 #   - status_classification.tok_sent_with_crf_classification
 #       - This contains a dictionary of {attrib_type:crf output}
 #           - attrib_type is in the domain {Temporal, Method, Type, Amount, History}
-#           - crf_output is a list of tuples: item1 is the token word, item 2 is the classififcation prediction
+#           - crf_output is a list of tuples: item1 is the token word, item 2 is the classification prediction
 #           -Example: {'History':[(stopped, 0), (smoking, 0), (four, History), (years, History), (ago, History)]}
 #
 # Where do I find Status Classification output?
