@@ -1,11 +1,12 @@
 from Classification import Globals
 
 class Sentence:
-    def __init__(self, sentence, begin_idx, end_idx):
+    def __init__(self,id, sentence, begin_idx, end_idx):
         self.sentence = sentence
         self.begin_idx = begin_idx
         self.end_idx = end_idx
         self.set_entities = set()
+        self.id = id
         self.labeled_type = None
 
     def add_entity(self, entity):
@@ -32,6 +33,7 @@ class Sentence:
         return True
 
     def has_substance_abuse_entity(self):
+        # Returns gold label authority on subs abuse presences
         for entity in self.set_entities:
             if entity.type in Globals.SPECIFIC_CLASSIFIER_TYPES:
                 return True
