@@ -135,8 +135,6 @@ def create_test_file(list_sent_objs, test_file_name, type):
             pointer = sent_offset + start
             word = match.group(0)
             test_file.write(word.rstrip(",.:;"))
-            # Debug line
-            # train_file.write("[" + str(pointer) + "," + str(sent_offset + match.end()) + "]")
             test_file.write("\t")
             answer = "0"
             debug_str = ""
