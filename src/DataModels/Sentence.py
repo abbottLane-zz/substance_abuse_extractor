@@ -6,15 +6,15 @@ class Sentence:
         self.sentence = sentence
         self.begin_idx = begin_idx
         self.end_idx = end_idx
-        self.set_entities = set()
+        self.attrib_list = []
         self.labeled_type = None
 
     def add_entity(self, entity):
-        self.set_entities.add(entity)
+        self.attrib_list.append(entity)
         pass
 
     def get_status_label_and_evidence(self, type):
-        for ent in self.set_entities:
+        for ent in self.attrib_list:
             if ent.type == type:
                 for attrib in ent.dict_of_attribs.values():
                     if attrib.type == "Status":
@@ -22,18 +22,18 @@ class Sentence:
         return "unknown", "evidence unavailable"
 
     def get_event_by_type(self, type):
-        for event in self.set_entities:
+        for event in self.attrib_list:
             if event.type == type:
                 return event
         return None
 
     def has_entity(self):
-        if len(self.set_entities) == 0:
+        if len(self.attrib_list) == 0:
             return False
         return True
 
     def has_substance_abuse_entity(self):
-        for entity in self.set_entities:
+        for entity in self.attrib_list:
             if entity.type in Globals.SPECIFIC_CLASSIFIER_TYPES:
                 return True
         return False
@@ -42,7 +42,7 @@ class Sentence:
         self.labeled_type = type
 
     def has_specific_abuse_entity(self, classification_type):
-        for entity in self.set_entities:
+        for entity in self.attrib_list:
             if entity.type == classification_type:
                 return True
         return False
