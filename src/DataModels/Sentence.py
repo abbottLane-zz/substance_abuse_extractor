@@ -8,6 +8,7 @@ class Sentence:
         self.set_entities = set()
         self.id = id
         self.labeled_type = None
+        self.tok_sent_with_crf_predicted_attribs = dict()
 
     def add_entity(self, entity):
         self.set_entities.add(entity)

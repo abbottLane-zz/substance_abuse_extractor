@@ -2,6 +2,8 @@ from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from Classification import Globals
 import subprocess
 # from nltk.tag import StanfordNERTagger
+from nltk.tag import StanfordNERTagger
+from nltk.tokenize import word_tokenize
 import re
 
 
@@ -61,24 +63,26 @@ def get_model_from_full_id(model_name):
     return type
 
 
-def test(testing_doc_objs, path="EntityExtractor/",
+def test(testing_sent_info_obj, path="EntityExtractor/",
          stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
          test_script_name="test_classify.sh"):
+    print("Testing Event-classified sentences...sit back, this takes a while (7 mins?)...")
     global entity_types
     for type in entity_types:
         if type != "Status":
-            curr_doc_num=1
-            for docobj in testing_doc_objs.values():
-                for sentobj in docobj.get_sentence_obj_list():
+            for abuse_type in Globals.SPECIFIC_CLASSIFIER_TYPES:
+                sent_objs = testing_sent_info_obj.get_sentences_w_info(abuse_type)
+                for sentobj in sent_objs:
                     list_of_one_sentence_because_a_list_is_whats_expected_here = list()
                     list_of_one_sentence_because_a_list_is_whats_expected_here.append(sentobj)
                     test_file_name = path + "Test-Files/" + "test-" +sentobj.id.replace("-", "")+ "_"+ type + ".tsv"
                     model_name = path + "Models/" + "model-" + type + ".ser.gz"
-                    create_test_file(list_of_one_sentence_because_a_list_is_whats_expected_here, test_file_name, type)
-                    model_to_use_for_classification = get_model_from_full_id(model_name)
-                    print("Classifying Sentence ID: " +test_file_name + " with CRF model: " + model_to_use_for_classification)
-                    test_model(stanford_ner_path,model_name, test_file_name, path+test_script_name)
-
+                    #create_test_file(list_of_one_sentence_because_a_list_is_whats_expected_here, test_file_name, type)
+                    #model_to_use_for_classification = get_model_from_full_id(model_name)
+                    #print("Classifying Sentence ID: " +test_file_name + " with CRF model: " + model_to_use_for_classification)
+                    #test_model(stanford_ner_path,model_name, test_file_name, path+test_script_name)
+                    sentobj = test_model_in_mem(stanford_ner_path,model_name,sentobj, type)
+    print("Finished CRF classification")
 
 def train(training_doc_objs, path="EntityExtractor/",
           stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
@@ -94,6 +98,19 @@ def train(training_doc_objs, path="EntityExtractor/",
             create_prop_file(prop_file_name, train_file_name, features, model_name)
             train_model(stanford_ner_path, prop_file_name, path+train_script_name)
 
+def test_model_in_mem(stanford_ner_path, model_name, sent_obj, type):
+    stanford_tagger = StanfordNERTagger(
+        model_name,
+        stanford_ner_path,
+        encoding='utf-8')
+
+    text = sent_obj.sentence
+    tokenized_text = word_tokenize(text)
+    classified_text = stanford_tagger.tag(tokenized_text)
+
+    #print(classified_text)
+    sent_obj.tok_sent_with_crf_predicted_attribs[type] = classified_text
+    return sent_obj
 
 def test_model(stanford_ner_path, model_name, test_file_name, test_script_name):
     subprocess.call(["./" + test_script_name + " " + stanford_ner_path + " " + model_name + " " + test_file_name], shell=True)
