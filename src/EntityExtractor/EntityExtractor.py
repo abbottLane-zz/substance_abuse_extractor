@@ -3,6 +3,7 @@ import subprocess
 # from nltk.tag import StanfordNERTagger
 from nltk.tag import StanfordNERTagger
 from nltk.tokenize import word_tokenize
+from DataLoader import Globals
 import re
 
 
