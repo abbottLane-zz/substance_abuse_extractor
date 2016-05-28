@@ -119,6 +119,9 @@ EntityExtractor.test(status_classification_info, stanford_ner_path=STAN_NER_DIR)
 # DEBUG -- place breakpoint here, take a look at the status_classification object and make sure it has everything we need
 test = 0
 
+##################################################################
+#### PUTTING EXTRACTION AND STATUS PREDICTIONS TOGETHER #########
+################################################################
 # DATA FOR COMBINING ATTRIBUTES TO EVENTS:
 # Where do I find the CRF classification output?
 #   - status_classification.tok_sent_with_crf_classification
