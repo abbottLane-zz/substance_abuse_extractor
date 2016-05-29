@@ -85,7 +85,7 @@ def test(testing_sent_info_obj, path="EntityExtractor/",
     print("Finished CRF classification")
 
 def train(training_doc_objs, path="EntityExtractor/",
-          stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
+          stanford_ner_path="C:\\Users\\Spencer\\stanford-ner-2014-06-16\\stanford-ner.jar",
           train_script_name="train_model.sh"):
     global features
     global entity_types

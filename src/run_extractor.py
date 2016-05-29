@@ -109,13 +109,13 @@ StatusClassifier.evaluate_status_classification(status_classification_info, stat
 ############################################
 
 # NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
-STAN_NER_DIR = "C:\\Users\\Spencer\\stanford-ner-2014-06-16"
+STAN_NER_DIR = "C:\\Users\\Spencer\\stanford-ner-2014-06-16\\stanford-ner.jar"
 
 # Train
-EntityExtractor.train(training_doc_objs, stanford_ner_path=STAN_NER_DIR)
+# EntityExtractor.train(training_doc_objs, stanford_ner_path=STAN_NER_DIR)
 
 # Test
-EntityExtractor.test(status_classification_info, stanford_ner_path=STAN_NER_DIR)
+# EntityExtractor.test(status_classification_info, stanford_ner_path=STAN_NER_DIR)
 
 # DEBUG -- place breakpoint here, take a look at the status_classification object and make sure it has everything we need
 test = 0
