@@ -32,3 +32,8 @@ TYPE = "Type"
 AMOUNT = "Amount"
 FREQ = "Frequency"
 HISTORY = "History"
+
+# Event Filler Features
+HAS_GRAM = "HAS_GRAM_"
+ATTRIB_TYPE = "ATTRIB_TYPE"
+EVENT_TYPE = "EVENT_TYPE"

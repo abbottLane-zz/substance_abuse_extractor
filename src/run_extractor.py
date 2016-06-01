@@ -4,6 +4,7 @@ from DataLoader.DataLoader import DataLoader
 from EntityExtractor import EntityExtractor
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from StatusClassification import StatusClassifier
+from EventFilling import EventFiller
 
 
 def get_test_fold(folds_data, test_fold_num):
@@ -138,3 +139,9 @@ test = 0
 #           - PredictedEvent is an object carrying all the info about the events we predicted for, and their status
 
 print(status_classification_info)
+
+# Train
+attrib_classifier = EventFiller.train_event_filler(training_doc_objs)
+
+# Allocate attributes to events
+EventFiller.fill_events(status_classification_info, attrib_classifier)
