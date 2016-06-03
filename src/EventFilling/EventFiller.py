@@ -1,6 +1,7 @@
 from DataModels import Sentence
 from DataModels.Event import Event
 from DataLoader import Globals as g
+from DataLoader import Configuration as c
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
 
 
@@ -51,7 +52,7 @@ def __features_and_labels(feature_extractor):
         doc_sent_objs = documents[key].get_sentence_obj_list()
 
         for sent_obj in doc_sent_objs:
-            attrib_features, gold_labels = attribute_feats_and_labels(sent_obj)
+            attrib_features, gold_labels = __attribute_feats_and_labels(sent_obj)
 
             for feats, labels in zip(attrib_features, gold_labels):
                 feature_sets.append(feats)
@@ -60,7 +61,7 @@ def __features_and_labels(feature_extractor):
     return feature_sets, label_sets
 
 
-def attribute_feats_and_labels(sent_obj):
+def __attribute_feats_and_labels(sent_obj):
     attrib_feature_dicts = []
     labels = []
 
@@ -70,42 +71,68 @@ def attribute_feats_and_labels(sent_obj):
         substance = event.type
 
         for attrib in event.dict_of_attribs:
-            attrib_features = grab_attribute_feats(attrib, sent_obj.sentence, events)
+            attrib_features = __grab_attribute_feats(attrib, sent_obj, events)
             attrib_feature_dicts.append(attrib_features)
             labels.append(substance)
 
     return attrib_feature_dicts, labels
 
 
-def grab_attribute_feats(attrib, sentence, events):
+def __grab_attribute_feats(attrib, sent_obj, events):
     attrib_feature_dict = {}
 
     # All event types found in sentence - learn which one to assign to
-    for event in events:
-        feat = g.EVENT_TYPE + event.type
-        attrib_feature_dict[feat] = True
+    __add_events_in_sent(attrib_feature_dict, events)
 
     # Attribute type
     feat = g.ATTRIB_TYPE + attrib.type
     attrib_feature_dict[feat] = True
 
     # Attribute unigrams
+    __add_attrib_words(attrib_feature_dict, attrib)
+
+    # Surrounding words
+    __add_surrounding_words(attrib_feature_dict, sent_obj, attrib)
+
+    # Words between attrib and mention?
+
+    return attrib_feature_dict
+
+
+def __tokenize(sentence):
+    tok_sent = [w.lower() for w in sentence.split()]
+    # TODO -- same tokenization as the Attribute Extractor
+    return tok_sent
+
+
+def __add_events_in_sent(attrib_feature_dict, events):
+    for event in events:
+        feat = g.EVENT_TYPE + event.type
+        attrib_feature_dict[feat] = True
+
+
+def __add_attrib_words(attrib_feature_dict, attrib):
     grams = attrib.text.split()
     for gram in grams:
         feat = g.HAS_GRAM + gram
         attrib_feature_dict[feat] = True
 
-    # Surrounding words
 
-    # Words between attrib and mention?
+def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
+    sentence = sent_obj.sentence
 
-    # TODO -- get features from tokenized sentence
-    tok_sent = tokenize_sentence(sentence)
+    # Tokenize surrounding words
+    attrib_start_index = attrib.span_begin - sent_obj.begin_idx
+    after_attrib_index = attrib_start_index+len(attrib.text)
+    pre_attrib = sentence[:attrib_start_index]
+    post_attrib = sentence[after_attrib_index:]
 
-    return attrib_feature_dict
+    pre_tok = __tokenize(pre_attrib)
+    post_tok = __tokenize(post_attrib)
 
-
-def tokenize_sentence(sentence):
-    tok_sent = []
-    # TODO -- same tokenization as the Attribute Extractor
-    return tok_sent
+    # Add unigrams within window
+    for pre, post in zip(pre_tok, post_tok)[:c.SURR_WORDS_WINDOW]:
+        pre_feat = g.SURR_WORD + pre
+        post_feat = g.SURR_WORD + post
+        attrib_feature_dict[pre_feat] = True
+        attrib_feature_dict[post_feat] = True
