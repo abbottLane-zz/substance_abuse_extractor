@@ -38,8 +38,8 @@ def get_attribs_from_sentence(sent_obj):
         for index, tuple in enumerate(sent_attrib_predictions[attrib_type]):
             gram = tuple[0]
             prediction = tuple[1]
-            span_start = tuple[2]
-            span_end = tuple[3]
+            span_start = tuple[2] + sent_obj.begin_idx
+            span_end = tuple[3] + sent_obj.begin_idx
 
             if prediction == attrib_type:
                 # Create new attrib if at the beginning of a new attrib
@@ -251,11 +251,11 @@ def evaluate(info):
     all_count = 0
 
     for sent_index, sent_obj in enumerate(info.sent_objs):
-        sent_file.write(sent_obj.sentence + "\n")
+        sent_file.write(str(sent_index) + ": " + sent_obj.sentence + "\n")
         gold_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
-        gold_file.write(str(sent_obj.begin_idx) + str(sent_obj.end_idx) + "\n")
+        gold_file.write(str(sent_obj.begin_idx) + " " + str(sent_obj.end_idx) + "\n")
         pred_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
-        pred_file.write(str(sent_obj.begin_idx) + str(sent_obj.end_idx) + "\n")
+        pred_file.write(str(sent_obj.begin_idx) + " " + str(sent_obj.end_idx) + "\n")
 
         gold_events = sent_obj.set_entities
         predicted_events = []
