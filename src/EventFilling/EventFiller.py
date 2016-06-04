@@ -1,9 +1,11 @@
 from DataLoader import Globals as g
 from DataLoader import Configuration as c
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
+from DataModels.TAttrib import TAttrib
 from Classification import Classifier
 from sklearn.svm import LinearSVC
 import numpy as np
+import re
 
 
 def fill_events(info, attrib_classifier, feature_map):
@@ -15,12 +17,53 @@ def fill_events(info, attrib_classifier, feature_map):
         events_per_sent[e] = info.predicted_event_objs_by_index[e]
 
     # Find attributes per sentence
-    attribs_per_sent = [[] for _ in sent_objs]   # list[list[Attributes]]
-    for a in info.tok_sent_with_crf_classification:
-        attribs_per_sent[a] = info.tok_sent_with_crf_classification[a]
+    attribs_per_sent = [get_attribs_from_sentence(s) for s in sent_objs]   # list[list[Attributes]]
 
     # Stuff attribs into events
     fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, feature_map)
+
+
+def get_attribs_from_sentence(sent_obj):
+    attributes = []
+    attribs_gram_lists = []
+    start_indicies = []
+    end_indicies = []
+    types = []
+
+    sent_attrib_predictions = sent_obj.tok_sent_with_crf_predicted_attribs
+    for attrib_type in sent_attrib_predictions:
+        in_attrib = False
+
+        for index, tuple in enumerate(sent_attrib_predictions[attrib_type]):
+            gram = tuple[0]
+            prediction = tuple[1]
+            span_start = tuple[2]
+            span_end = tuple[3]
+
+            if prediction == attrib_type:
+                # Create new attrib if at the beginning of a new attrib
+                if not in_attrib:
+                    attribs_gram_lists.append([])
+                    start_indicies.append(span_start)
+                    end_indicies.append(span_end)
+                    types.append(attrib_type)
+                    in_attrib = True
+                else:
+                    # Keep updating the end index
+                    end_indicies[-1] = span_end
+
+                # Add to current attrib until attrib label changes
+                attribs_gram_lists[-1].append(gram)
+            else:
+                in_attrib = False
+
+    for tag_index, (gram_list, start_index, end_index, type) in enumerate(zip(attribs_gram_lists, start_indicies, end_indicies, types)):
+        tag = "T" + str(tag_index)
+        text, end_index = recover_text_from_span(sent_obj, start_index, end_index)
+        attrib = TAttrib(tag, type, start_index, end_index, text, None)
+        attributes.append(attrib)
+
+    return attributes
 
 
 def fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, feature_map):
@@ -30,9 +73,11 @@ def fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, featur
             for attrib_type in attribs:
                 events[0].attributes_list.append(attribs[attrib_type][0])
 
-        # Else, ya gotta get more tricky
+        # Else, get more tricky
         else:
             assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, feature_map)
+
+        # Add statuses to statuses to State
 
 
 def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, feature_map):
@@ -53,7 +98,7 @@ def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, featu
         for e in events:
             event = events[e]
 
-            # If classified as this event
+            # If classified as this event type
             if classification[0] == event.type:
                 event.attributes_list.append(attrib)
                 assigned_event = True
@@ -61,6 +106,20 @@ def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, featu
         # If assigned to existing substance type, put into one that is
         if not assigned_event:
             events[0].attributes_list.append(attrib)
+
+
+def recover_text_from_span(sent_obj, start_index, end_index):
+    start = start_index - sent_obj.begin_idx
+    end = end_index - sent_obj.begin_idx
+    text = sent_obj.sentence[start:end]
+
+    # Strip off any ending punctuation
+    has_ending_punc = re.match(r"(.*)[\.,?!]$", text)
+    if has_ending_punc:
+        text = has_ending_punc.group(1)
+        end_index -= 1
+
+    return text, end_index
 
 
 def train_event_filler(training_doc_objs):
