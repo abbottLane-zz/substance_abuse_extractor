@@ -28,13 +28,12 @@ def train_models(feature_extractor):
         classifiers[class_type] = classifier
         feat_maps[class_type] = feat_map
 
-
     return classifiers, feat_maps, sent_info
 
 
 def train_model(proc_sents, labels):
         # Convert Data to vectors
-        sent_vectors, labels_for_classifier, feature_map = __vectorize_data(proc_sents, labels)
+        sent_vectors, labels_for_classifier, feature_map = vectorize_data(proc_sents, labels)
 
         # Create Model
         classifier = LinearSVC()
@@ -67,7 +66,7 @@ def classify(classifier, classifier_type, feature_map, sent_info):
     number_of_features = len(feature_map)
 
     # Vectorize sentences and classify
-    test_vectors = [__vectorize_test_sent(feats, feature_map) for feats in sent_feats]
+    test_vectors = [vectorize_test_sent(feats, feature_map) for feats in sent_feats]
     test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
     classifications = classifier.predict(test_array)
 
@@ -138,7 +137,7 @@ def __sentences_and_labels(feature_extractor):
     return sent_info
 
 
-def __vectorize_data(sentences, labels):
+def vectorize_data(sentences, labels):
     # convert to vectors
     dict_vec = DictVectorizer()
     sentence_vectors = dict_vec.fit_transform(sentences).toarray()
@@ -152,7 +151,7 @@ def __vectorize_data(sentences, labels):
     return sentence_vectors, np.array(labels), feature_map
 
 
-def __vectorize_test_sent(feats, feature_map):
+def vectorize_test_sent(feats, feature_map):
     vector = [0 for _ in range(len(feature_map))]
     grams = feats.keys()
     for gram in grams:
@@ -163,8 +162,6 @@ def __vectorize_test_sent(feats, feature_map):
 
 
 def __process_sentence(sentence):
-    # TODO -- remove 'SOCIAL HISTORY:' and variants
-
     sentence = sentence.lower()
     grams = sentence.split()
     processed_grams = []
@@ -178,8 +175,6 @@ def __process_sentence(sentence):
         # Remove punctuation
         gram = gram.rstrip(ending_punc)
         gram = gram.lstrip(starting_punc)
-
-        # TODO -- prune unuseful words
 
         if gram:
             # Compress into word classes

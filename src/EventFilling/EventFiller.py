@@ -1,27 +1,30 @@
-from DataModels import Sentence
-from DataModels.Event import Event
 from DataLoader import Globals as g
 from DataLoader import Configuration as c
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
+from Classification import Classifier
+from sklearn.svm import LinearSVC
+import numpy as np
 
 
-def fill_events(info, attrib_classifier):
-    # Set up sents, events, attributes
-    tok_sents = []              # list[bare sentences]
-    events_per_sent = [[] for _ in tok_sents]   # list[event_list] -- event_list= list[{}]
+def fill_events(info, attrib_classifier, feature_map):
+    sent_objs = info.sent_objs
+
+    # Find events per sentence
+    events_per_sent = [[] for _ in sent_objs]   # list[event_list] -- event_list= list[{}]
     for e in info.predicted_event_objs_by_index:
         events_per_sent[e] = info.predicted_event_objs_by_index[e]
 
-    attribs_per_sent = [[] for _ in tok_sents]   # list[list[Attributes]]
+    # Find attributes per sentence
+    attribs_per_sent = [[] for _ in sent_objs]   # list[list[Attributes]]
     for a in info.tok_sent_with_crf_classification:
         attribs_per_sent[a] = info.tok_sent_with_crf_classification[a]
 
     # Stuff attribs into events
-    fill(tok_sents, events_per_sent, attribs_per_sent, attrib_classifier)
+    fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, feature_map)
 
 
-def fill(tok_sents, events_per_sent, attribs_per_sent, attrib_classifier):
-    for sent, events, attribs in zip(tok_sents, events_per_sent, attribs_per_sent):
+def fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, feature_map):
+    for sent_obj, events, attribs in zip(sent_objs, events_per_sent, attribs_per_sent):
         # If there's just one event, stuff all attributes in
         if len(events) == 1:
             for attrib_type in attribs:
@@ -29,18 +32,49 @@ def fill(tok_sents, events_per_sent, attribs_per_sent, attrib_classifier):
 
         # Else, ya gotta get more tricky
         else:
-            assign_attribs_to_events(sent, events, attribs, attrib_classifier)
+            assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, feature_map)
 
 
-def assign_attribs_to_events(sent, events, attribs, attrib_classifier):
-    pass
+def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, feature_map):
+    for a in attribs:
+        attrib = attribs[a]
+
+        # Get data
+        attrib_feats = __grab_attribute_feats(attrib, sent_obj, events)
+        number_of_features = len(feature_map)
+
+        # Vectorize sentences and classify
+        test_vector = Classifier.vectorize_test_sent(attrib_feats, feature_map)
+        test_array = np.reshape(test_vector, (1, number_of_features))
+        classification = attrib_classifier.predict(test_array)
+
+        # Assign attributes based on classifcations
+        assigned_event = False
+        for e in events:
+            event = events[e]
+
+            # If classified as this event
+            if classification[0] == event.type:
+                event.attributes_list.append(attrib)
+                assigned_event = True
+
+        # If assigned to existing substance type, put into one that is
+        if not assigned_event:
+            events[0].attributes_list.append(attrib)
 
 
 def train_event_filler(training_doc_objs):
     feature_extractor = FeatureExtractor(training_doc_objs)
 
+    # Get feature
     features, labels = __features_and_labels(feature_extractor)
-    pass
+    attrib_vectors, labels_for_classifier, feature_map = Classifier.vectorize_data(features, labels)
+
+    # Create Model
+    classifier = LinearSVC()
+    classifier.fit(attrib_vectors, labels_for_classifier)
+
+    return classifier, feature_map
 
 
 def __features_and_labels(feature_extractor):
@@ -56,7 +90,7 @@ def __features_and_labels(feature_extractor):
 
             for feats, labels in zip(attrib_features, gold_labels):
                 feature_sets.append(feats)
-                label_sets.append(gold_labels)
+                label_sets.append(labels)
 
     return feature_sets, label_sets
 
@@ -71,7 +105,7 @@ def __attribute_feats_and_labels(sent_obj):
         substance = event.type
 
         for attrib in event.dict_of_attribs:
-            attrib_features = __grab_attribute_feats(attrib, sent_obj, events)
+            attrib_features = __grab_attribute_feats(event.dict_of_attribs[attrib], sent_obj, events)
             attrib_feature_dicts.append(attrib_features)
             labels.append(substance)
 
@@ -122,7 +156,7 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
     sentence = sent_obj.sentence
 
     # Tokenize surrounding words
-    attrib_start_index = attrib.span_begin - sent_obj.begin_idx
+    attrib_start_index = int(attrib.span_begin) - sent_obj.begin_idx
     after_attrib_index = attrib_start_index+len(attrib.text)
     pre_attrib = sentence[:attrib_start_index]
     post_attrib = sentence[after_attrib_index:]
@@ -131,8 +165,11 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
     post_tok = __tokenize(post_attrib)
 
     # Add unigrams within window
-    for pre, post in zip(pre_tok, post_tok)[:c.SURR_WORDS_WINDOW]:
+    window_start_index = len(pre_tok) - c.SURR_WORDS_WINDOW
+    for pre in pre_tok[window_start_index:]:
         pre_feat = g.SURR_WORD + pre
-        post_feat = g.SURR_WORD + post
         attrib_feature_dict[pre_feat] = True
+
+    for post in post_tok[:c.SURR_WORDS_WINDOW]:
+        post_feat = g.SURR_WORD + post
         attrib_feature_dict[post_feat] = True

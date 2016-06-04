@@ -4,7 +4,7 @@ from sklearn.svm import LinearSVC
 import copy
 from DataLoader import Globals
 from Classification import SentInfo
-from Classification.Classifier import __sentences_and_labels, __vectorize_data, __vectorize_test_sent, \
+from Classification.Classifier import __sentences_and_labels, vectorize_data, vectorize_test_sent, \
     __process_sentence
 from DataModels.PredictedEvent import PredictedEvent
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
@@ -80,7 +80,7 @@ def get_bigrams(input_list):
 
 def train_model(proc_sents, labels):
         # Convert Data to vectors
-        sent_vectors, labels_for_classifier, feature_map = __vectorize_data(proc_sents, labels)
+        sent_vectors, labels_for_classifier, feature_map = vectorize_data(proc_sents, labels)
 
         # Create Model
         classifier = LinearSVC()
@@ -107,7 +107,7 @@ def classify(classifier, classifier_type, feature_map, sent_info):
     number_of_features = len(feature_map)
 
     # Vectorize sentences and classify
-    test_vectors = [__vectorize_test_sent(feats, feature_map) for feats in features]
+    test_vectors = [vectorize_test_sent(feats, feature_map) for feats in features]
     test_array = np.reshape(test_vectors, (number_of_sentences, number_of_features))
     classifications = classifier.predict(test_array)
 

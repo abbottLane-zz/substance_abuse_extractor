@@ -113,10 +113,10 @@ StatusClassifier.evaluate_status_classification(status_classification_info, stat
 STAN_NER_DIR = "C:\\Users\\Spencer\\stanford-ner-2014-06-16\\stanford-ner.jar"
 
 # Train
-# EntityExtractor.train(training_doc_objs, stanford_ner_path=STAN_NER_DIR)
+EntityExtractor.train(training_doc_objs, stanford_ner_path=STAN_NER_DIR)
 
 # Test
-# EntityExtractor.test(status_classification_info, stanford_ner_path=STAN_NER_DIR)
+EntityExtractor.test(status_classification_info, stanford_ner_path=STAN_NER_DIR)
 
 # DEBUG -- place breakpoint here, take a look at the status_classification object and make sure it has everything we need
 test = 0
@@ -141,7 +141,9 @@ test = 0
 print(status_classification_info)
 
 # Train
-attrib_classifier = EventFiller.train_event_filler(training_doc_objs)
+attrib_classifier, feature_map = EventFiller.train_event_filler(training_doc_objs)
 
 # Allocate attributes to events
-EventFiller.fill_events(status_classification_info, attrib_classifier)
+EventFiller.fill_events(status_classification_info, attrib_classifier, feature_map)
+
+print(status_classification_info)
