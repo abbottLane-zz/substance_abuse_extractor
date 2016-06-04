@@ -32,6 +32,7 @@ TYPE = "Type"
 AMOUNT = "Amount"
 FREQ = "Frequency"
 HISTORY = "History"
+ATTRIBUTE_TYPES = {STATUS, TEMPORAL, METHOD, TYPE, AMOUNT, FREQ, HISTORY}
 
 # Event Filler Features
 HAS_GRAM = "HAS_GRAM_"
