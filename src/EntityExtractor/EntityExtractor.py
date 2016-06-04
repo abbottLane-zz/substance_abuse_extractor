@@ -188,6 +188,8 @@ def create_train_file(training_doc_objs, train_file_name, type):
                 # train_file.write(sentence + "\n")
                 entity_set = sent_obj.set_entities
                 sent_offset = sent_obj.begin_idx
+
+
                 for match in re.finditer("\S+", sentence):
                     start = match.start()
                     end = match.end()
