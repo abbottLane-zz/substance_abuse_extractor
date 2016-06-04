@@ -147,3 +147,4 @@ attrib_classifier, feature_map = EventFiller.train_event_filler(training_doc_obj
 EventFiller.fill_events(status_classification_info, attrib_classifier, feature_map)
 
 print(status_classification_info)
+EventFiller.evaluate(status_classification_info)

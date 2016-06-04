@@ -70,8 +70,8 @@ def fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, featur
     for sent_obj, events, attribs in zip(sent_objs, events_per_sent, attribs_per_sent):
         # If there's just one event, stuff all attributes in
         if len(events) == 1:
-            for attrib_type in attribs:
-                events[0].attributes_list.append(attribs[attrib_type][0])
+            for attrib in attribs:
+                events[0].attributes_list.append(attrib)
 
         # Else, get more tricky
         else:
@@ -81,9 +81,7 @@ def fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, featur
 
 
 def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, feature_map):
-    for a in attribs:
-        attrib = attribs[a]
-
+    for attrib in attribs:
         # Get data
         attrib_feats = __grab_attribute_feats(attrib, sent_obj, events)
         number_of_features = len(feature_map)
@@ -95,9 +93,7 @@ def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, featu
 
         # Assign attributes based on classifcations
         assigned_event = False
-        for e in events:
-            event = events[e]
-
+        for event in events:
             # If classified as this event type
             if classification[0] == event.type:
                 event.attributes_list.append(attrib)
@@ -109,8 +105,8 @@ def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, featu
 
 
 def recover_text_from_span(sent_obj, start_index, end_index):
-    start = start_index - sent_obj.begin_idx
-    end = end_index - sent_obj.begin_idx
+    start = start_index  # - sent_obj.begin_idx
+    end = end_index      # - sent_obj.begin_idx
     text = sent_obj.sentence[start:end]
 
     # Strip off any ending punctuation
@@ -232,3 +228,79 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
     for post in post_tok[:c.SURR_WORDS_WINDOW]:
         post_feat = g.SURR_WORD + post
         attrib_feature_dict[post_feat] = True
+
+
+def evaluate(info):
+    outfile = open("EventFillerResults.txt", "w")
+    exact_all = 0
+    partial_all = 0
+    total = 0
+    same_type = 0
+    all_count = 0
+
+    for sent_index, sent_obj in enumerate(info.sent_objs):
+        gold_events = sent_obj.set_entities
+        predicted_events = []
+        if sent_index in info.predicted_event_objs_by_index:
+            predicted_events = info.predicted_event_objs_by_index[sent_index]
+
+        for gold_event in gold_events:
+            outfile.write("\nEvent:\n")
+            # total
+            for a in gold_event.dict_of_attribs:
+                attrib = gold_event.dict_of_attribs[a]
+                if attrib.type not in g.SPECIFIC_CLASSIFIER_TYPES and attrib.type != "Status":
+                    total += 1
+
+            # exact, partial
+            for pred_event in predicted_events:
+                if gold_event.type == pred_event.type:
+                    exact, partial, count, same = compare_attributes(gold_event.dict_of_attribs, pred_event.attributes_list, outfile)
+
+                    outfile.write(gold_event.type + " " + str(exact) + " " + str(partial))
+                    exact_all += exact
+                    partial_all += partial
+                    all_count += count
+                    same_type += same
+
+    if total != 0:
+        print("Exact accuracy: " + str(exact_all/total))
+        print("Partial accuracy: " + str(partial_all/total))
+        print(exact_all)
+        print(partial_all)
+        print(total)
+        print(same_type)
+        print(all_count)
+
+
+def compare_attributes(gold_attribs, pred_attribs, outfile):
+    exact = 0
+    partial = 0
+    count = 0
+    same = 0
+
+    for gold in gold_attribs:
+        count += 1
+        gold_attrib = gold_attribs[gold]
+        outfile.write("Gold -" + gold_attrib.type + " \n")
+        for pred_attrib in pred_attribs:
+            if gold_attrib.type == pred_attrib.type:
+                same += 1
+                exact, partial = score(gold_attrib.span_begin, gold_attrib.span_end,
+                                       pred_attrib.span_begin, pred_attrib.span_end)
+                outfile.write("pred -" + str(exact) + str(partial) + "\n")
+
+    return exact, partial, count, same
+
+
+def score(gold_begin, gold_end, pred_begin, pred_end):
+    exact = 0
+    partial = 0
+
+    if int(gold_begin) == pred_begin and int(gold_end) == pred_end:
+        exact += 1
+        partial += 1
+    elif int(gold_end) >= pred_begin and int(gold_begin) <= pred_end:
+        partial += 1
+
+    return exact, partial
