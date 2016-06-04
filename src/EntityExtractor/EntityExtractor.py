@@ -36,23 +36,23 @@ entity_types = [
 ]
 
 
-def classify(training_doc_objs,
-             stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
-             train_file_name="train-file.tsv",
-             prop_file_name="attr_extract.prop",
-             model_name="ner-model.ser.gz",
-             test_file_name="test-file.tsv",
-             train_script_name="train_model.sh",
-             test_script_name="test_classify.sh"):
-    """
-    This function is currently not used.
-    :return: list of sent_objs with attributes filled
-    """
-    global features
-    create_train_file(training_doc_objs, train_file_name)
-    create_prop_file(prop_file_name, train_file_name, features, model_name)
-    train_model(stanford_ner_path, prop_file_name, train_script_name)
-    test_model(stanford_ner_path, model_name, test_file_name, test_script_name)
+# def classify(training_doc_objs,
+#              stanford_ner_path="/home/wlane/stanford-ner-2015-04-20/stanford-ner.jar",
+#              train_file_name="train-file.tsv",
+#              prop_file_name="attr_extract.prop",
+#              model_name="ner-model.ser.gz",
+#              test_file_name="test-file.tsv",
+#              train_script_name="train_model.sh",
+#              test_script_name="test_classify.sh"):
+#     """
+#     This function is currently not used.
+#     :return: list of sent_objs with attributes filled
+#     """
+#     global features
+#     create_train_file(training_doc_objs, train_file_name)
+#     create_prop_file(prop_file_name, train_file_name, features, model_name)
+#     train_model(stanford_ner_path, prop_file_name, train_script_name)
+#     test_model(stanford_ner_path, model_name, test_file_name, test_script_name)
 
 
 def get_model_from_full_id(model_name):

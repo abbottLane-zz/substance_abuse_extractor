@@ -112,7 +112,7 @@ StatusClassifier.evaluate_status_classification(status_classification_info, stat
 ############################################
 
 # NOTE: MUST CHANGE PARAMETER stanford_ner_path to your 'stanford-ner.jar' path
-STAN_NER_DIR = "C:\\Users\\Spencer\\stanford-ner-2014-06-16\\stanford-ner.jar"
+STAN_NER_DIR = "/home/wlane/compling/stanford-ner-2014-06-16/stanford-ner.jar"
 
 # Train
 EntityExtractor.train(training_doc_objs, stanford_ner_path=STAN_NER_DIR)

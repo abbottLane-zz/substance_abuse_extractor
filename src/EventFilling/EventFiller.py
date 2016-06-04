@@ -232,6 +232,13 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
         attrib_feature_dict[post_feat] = True
 
 
+def evaluate_tp_fp_fn(predicted_events, gold_events):
+
+
+
+    pass
+
+
 def evaluate(info):
     outfile = open("EventFillerResults.txt", "w")
     gold_file = open("GoldEventsAndAttributes", "w")
@@ -254,6 +261,10 @@ def evaluate(info):
         predicted_events = []
         if sent_index in info.predicted_event_objs_by_index:
             predicted_events = info.predicted_event_objs_by_index[sent_index]
+
+        # Take predicted events and gold events and evaluate them using TP/FP/FN
+        result_str = evaluate_tp_fp_fn(predicted_events, gold_events)
+
 
         # Print predicted events
         for pred_event in predicted_events:
