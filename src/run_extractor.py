@@ -124,7 +124,7 @@ test = 0
 ################################################################
 # DATA FOR COMBINING ATTRIBUTES TO EVENTS:
 # Where do I find the CRF classification output?
-#   - status_classification.one of the sentences in sent_objs.tok_sent_with_crf_classification
+#   - status_classification.one_of_the_sentences_in_sent_objs.tok_sent_with_crf_classification
 #       - This contains a dictionary of {attrib_type:crf output}
 #           - attrib_type is in the domain {Temporal, Method, Type, Amount, History}
 #           - crf_output is a list of tuples: item1 is the token word, item 2 is the classification prediction
