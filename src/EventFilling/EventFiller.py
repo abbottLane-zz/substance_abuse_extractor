@@ -29,6 +29,7 @@ def get_attribs_from_sentence(sent_obj):
     start_indicies = []
     end_indicies = []
     types = []
+    tag_index = 0
 
     sent_attrib_predictions = sent_obj.tok_sent_with_crf_predicted_attribs
     for attrib_type in sent_attrib_predictions:
@@ -57,8 +58,9 @@ def get_attribs_from_sentence(sent_obj):
             else:
                 in_attrib = False
 
-    for tag_index, (gram_list, start_index, end_index, type) in enumerate(zip(attribs_gram_lists, start_indicies, end_indicies, types)):
+    for gram_list, start_index, end_index, type in zip(attribs_gram_lists, start_indicies, end_indicies, types):
         tag = "T" + str(tag_index)
+        tag_index += 1
         text, end_index = recover_text_from_span(sent_obj, start_index, end_index)
         attrib = TAttrib(tag, type, start_index, end_index, text, None)
         attributes.append(attrib)
@@ -232,6 +234,9 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
 
 def evaluate(info):
     outfile = open("EventFillerResults.txt", "w")
+    gold_file = open("GoldEventsAndAttributes", "w")
+    pred_file = open("PredEventsAndAttributes", "w")
+    sent_file = open("Sentences", "w")
     exact_all = 0
     partial_all = 0
     total = 0
@@ -239,29 +244,46 @@ def evaluate(info):
     all_count = 0
 
     for sent_index, sent_obj in enumerate(info.sent_objs):
+        sent_file.write(sent_obj.sentence + "\n")
+        gold_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
+        gold_file.write(str(sent_obj.begin_idx) + str(sent_obj.end_idx) + "\n")
+        pred_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
+        pred_file.write(str(sent_obj.begin_idx) + str(sent_obj.end_idx) + "\n")
+
         gold_events = sent_obj.set_entities
         predicted_events = []
         if sent_index in info.predicted_event_objs_by_index:
             predicted_events = info.predicted_event_objs_by_index[sent_index]
 
+        # Print predicted events
+        for pred_event in predicted_events:
+            pred_file.write("\n\nEvent: " + pred_event.type + "\n")
+            pred_file.write("Status: " + pred_event.status + "\n")
+            for attrib in pred_event.attributes_list:
+                pred_file.write(attrib.type + " " + str(attrib.span_begin) + " " + str(attrib.span_end) + " " + attrib.text + "\n")
+
+        # Print gold events and find exact/partial coreect
         for gold_event in gold_events:
-            outfile.write("\nEvent:\n")
-            # total
-            for a in gold_event.dict_of_attribs:
-                attrib = gold_event.dict_of_attribs[a]
-                if attrib.type not in g.SPECIFIC_CLASSIFIER_TYPES and attrib.type != "Status":
-                    total += 1
+            if gold_event.type in g.SPECIFIC_CLASSIFIER_TYPES:
+                gold_file.write("\nEvent: " + gold_event.type + "\n")
+                # total
+                for a in gold_event.dict_of_attribs:
+                    attrib = gold_event.dict_of_attribs[a]
+                    if attrib.type not in g.SPECIFIC_CLASSIFIER_TYPES and attrib.type != "Status":
+                        total += 1
 
-            # exact, partial
-            for pred_event in predicted_events:
-                if gold_event.type == pred_event.type:
-                    exact, partial, count, same = compare_attributes(gold_event.dict_of_attribs, pred_event.attributes_list, outfile)
+                    gold_file.write(attrib.type + " " + str(attrib.span_begin) + " " + str(attrib.span_end) + " " + attrib.text + "\n")
 
-                    outfile.write(gold_event.type + " " + str(exact) + " " + str(partial))
-                    exact_all += exact
-                    partial_all += partial
-                    all_count += count
-                    same_type += same
+                # exact, partial
+                for pred_event in predicted_events:
+                    if gold_event.type == pred_event.type:
+                        exact, partial, count, same = compare_attributes(gold_event.dict_of_attribs, pred_event.attributes_list, outfile)
+
+                        outfile.write(gold_event.type + " " + str(exact) + " " + str(partial))
+                        exact_all += exact
+                        partial_all += partial
+                        all_count += count
+                        same_type += same
 
     if total != 0:
         print("Exact accuracy: " + str(exact_all/total))

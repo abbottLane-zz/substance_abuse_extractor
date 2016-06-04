@@ -79,9 +79,11 @@ testing_feat_extractor = FeatureExtractor(testing_doc_objs)
 sent_classification_info = Classifier.get_classifications(classifiers, feature_maps, testing_feat_extractor)
 
 # How to use:
+'''
 print("\nSentence Objects with substance info:\n" + str(sent_classification_info.get_sentences_w_info(
     Globals.SUBSTANCE)))
 print("Sentence Objects with alcohol info:\n" + str(sent_classification_info.get_sentences_w_info(Globals.ALCOHOL)))
+'''
 
 results_file = Globals.CLASSF_EVAL_FILE
 sent_classification_info.evaluate_classifications(results_file, TEST_FOLD)
@@ -148,3 +150,4 @@ EventFiller.fill_events(status_classification_info, attrib_classifier, feature_m
 
 print(status_classification_info)
 EventFiller.evaluate(status_classification_info)
+
