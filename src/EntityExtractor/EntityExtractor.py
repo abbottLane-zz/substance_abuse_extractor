@@ -105,11 +105,27 @@ def test_model_in_mem(stanford_ner_path, model_name, sent_obj, type):
         encoding='utf-8')
 
     text = sent_obj.sentence
-    tokenized_text = word_tokenize(text)
+    tokenized_text = list()
+    spans = list()
+    #Recover spans here
+    for match in re.finditer("\S+", text):
+        start = match.start()
+        end = match.end()
+        # pointer = sent_offset + start
+        word = match.group(0)
+        tokenized_text.append(word.rstrip(",.;:"))
+        spans.append((start,end))
+    #tokenized_text = word_tokenize(text)
     classified_text = stanford_tagger.tag(tokenized_text)
 
+    # Expand tuple to have span as well
+    final_class_and_span = list()
+    for idx,tup in enumerate(classified_text):
+        combined = (classified_text[idx][0],classified_text[idx][1],spans[idx][0],spans[idx][1])
+        final_class_and_span.append(combined)
+
     #print(classified_text)
-    sent_obj.tok_sent_with_crf_predicted_attribs[type] = classified_text
+    sent_obj.tok_sent_with_crf_predicted_attribs[type] = final_class_and_span
     return sent_obj
 
 def test_model(stanford_ner_path, model_name, test_file_name, test_script_name):
