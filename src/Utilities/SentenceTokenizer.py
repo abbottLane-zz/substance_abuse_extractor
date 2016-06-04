@@ -26,6 +26,17 @@ def tokenizeSentence(sentence):
         final_toks.append(tok)
     return final_toks
 
+def strip_sec_headers_tokenized_text(toks):
+    UNWANTED_TOKS = {"SOCIAL", "HISTORY", "SUBSTANCE", "ABUSE"}
+
+    new_toks = list()
+    for tok in toks:
+        if tok not in UNWANTED_TOKS:
+            new_toks.append(tok)
+        else:
+            new_toks.append("")
+    return new_toks
+
 def span_tokenizer(sent):
 
     spans = string_span_tokenize(sent, " ")
