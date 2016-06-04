@@ -233,6 +233,23 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
 
 
 def evaluate_tp_fp_fn(predicted_events, gold_events):
+    sdaflk=0
+
+    POI_TYPES=g.SPECIFIC_CLASSIFIER_TYPES.extend()
+
+    # initialise dict counts
+    tp_count_dict = dict()
+    fp_count_dict = dict()
+    fn_count_dict = dict()
+    for t in POI_TYPES:
+        tp_count_dict[t]=0
+
+    for gold_event in gold_events:
+        if gold_event.type in g.SPECIFIC_CLASSIFIER_TYPES:
+            for predicted_event in predicted_events:
+                if predicted_event.type == gold_event.type: #these two events should be compared
+                    type = predicted_event.type
+                    tp_count_dict[type]+=1
 
 
 
