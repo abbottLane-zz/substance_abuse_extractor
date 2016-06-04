@@ -79,8 +79,6 @@ def fill(sent_objs, events_per_sent, attribs_per_sent, attrib_classifier, featur
         else:
             assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, feature_map)
 
-        # Add statuses to statuses to State
-
 
 def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, feature_map):
     for attrib in attribs:
@@ -269,10 +267,13 @@ def evaluate(info):
                 # total
                 for a in gold_event.dict_of_attribs:
                     attrib = gold_event.dict_of_attribs[a]
-                    if attrib.type not in g.SPECIFIC_CLASSIFIER_TYPES and attrib.type != "Status":
+                    if attrib.type not in g.SPECIFIC_CLASSIFIER_TYPES and attrib.type != g.STATUS:
                         total += 1
 
-                    gold_file.write(attrib.type + " " + str(attrib.span_begin) + " " + str(attrib.span_end) + " " + attrib.text + "\n")
+                    if attrib.type == g.STATUS:
+                        gold_file.write(g.STATUS + " " + attrib.a_attrib.status + "\n")
+                    else:
+                        gold_file.write(attrib.type + " " + str(attrib.span_begin) + " " + str(attrib.span_end) + " " + attrib.text + "\n")
 
                 # exact, partial
                 for pred_event in predicted_events:
