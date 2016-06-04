@@ -135,53 +135,6 @@ def test_model(stanford_ner_path, model_name, test_file_name, test_script_name):
 def train_model(stanford_ner_path, prop_file_name, train_script_name):
     subprocess.call(["./"+train_script_name+" "+stanford_ner_path+" "+prop_file_name], shell=True)
 
-def create_test_file(list_sent_objs, test_file_name, type):
-    test_file = open(test_file_name, 'w')
-    for sent_obj in list_sent_objs:
-        #if sent_obj.has_substance_abuse_entity(): # is this legal? this method checks gold label status
-        sentence = sent_obj.sentence
-        # Debug lines
-        # train_file.write(doc + "\n")
-        # train_file.write(sentence + "\n")
-        entity_set = sent_obj.set_entities
-        sent_offset = sent_obj.begin_idx
-        for match in re.finditer("\S+", sentence):
-            start = match.start()
-            end = match.end()
-            pointer = sent_offset + start
-            word = match.group(0)
-            test_file.write(word.rstrip(",.:;"))
-            test_file.write("\t")
-            answer = "0"
-            debug_str = ""
-            for entity in entity_set:
-                if answer != "0":
-                    break
-                if entity.is_substance_abuse():
-                    attr_dict = entity.dict_of_attribs
-                    for attr in attr_dict:
-                        attr_start = int(attr_dict[attr].span_begin)
-                        attr_end = int(attr_dict[attr].span_end)
-                        if attr_dict[attr].type == type and \
-                           attr_start <= pointer < attr_end:
-                            answer = type
-                            # Debug lines
-                            # answer += "\t" + attr_dict[attr].text +\
-                            #          "[" + str(attr_start) +\
-                            #          "," + str(attr_end) + "]"
-                            debug_str = "--- Sent obj start index: " + str(sent_offset) + "\n" + \
-                                        "--- Match obj start index: " + str(start) + "\n" + \
-                                        "--- Match obj end index: " + str(end) + "\n" + \
-                                        "--- Pointer index: " + str(sent_offset) + " + " + \
-                                        str(start) + " = " + str(pointer) + "\n" + \
-                                        "--- Attr start index: " + str(attr_start) + "\n" + \
-                                        "--- Attr end index: " + str(attr_end) + "\n"
-                            break
-            test_file.write(answer + "\n")
-            # Debug line
-            # train_file.write(debug_str)
-            #print(debug_str)
-    test_file.close()
 
 def create_train_file(training_doc_objs, train_file_name, type):
     """
