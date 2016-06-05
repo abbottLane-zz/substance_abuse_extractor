@@ -230,28 +230,90 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
         attrib_feature_dict[post_feat] = True
 
 
-def evaluate_tp_fp_fn(predicted_events, gold_events):
-    sdaflk=0
+def give_1_false_to_every_poi(event, f_count_dict, flag):
 
-    POI_TYPES=g.SPECIFIC_CLASSIFIER_TYPES.extend()
+    if flag == "gold":
+        f_count_dict[event.type] +=1
+        f_count_dict[g.STATUS] +=1
+
+        for attrib in event.dict_of_attribs.values():
+            if attrib.type in g.ATTRIBUTE_TYPES and attrib.type!= g.STATUS:
+                f_count_dict[attrib.type] +=1
+
+        return f_count_dict
+    else:
+        f_count_dict[event.type] += 1
+        f_count_dict[g.STATUS] += 1
+
+        for attrib in event.attributes_list:
+            if attrib.type in g.ATTRIBUTE_TYPES and attrib.type != g.STATUS:
+                f_count_dict[attrib.type] += 1
+
+        return f_count_dict
+
+
+
+def evaluate_tp_fp_fn(predicted_events, gold_events):
+    POI_TYPES=g.POI_TYPE
 
     # initialise dict counts
     tp_count_dict = dict()
     fp_count_dict = dict()
     fn_count_dict = dict()
     for t in POI_TYPES:
-        tp_count_dict[t]=0
+        tp_count_dict[t]= 0
+        fp_count_dict[t] = 0
+        fn_count_dict[t] = 0
 
+    # Iterate over Gold events to capture TP FN
     for gold_event in gold_events:
         if gold_event.type in g.SPECIFIC_CLASSIFIER_TYPES:
+            found_type= False
             for predicted_event in predicted_events:
                 if predicted_event.type == gold_event.type: #these two events should be compared
+
+                    # Type is a POI
+                    found_type=True
                     type = predicted_event.type
                     tp_count_dict[type]+=1
 
+                    # Status is another POI
+                    if predicted_event.status == gold_event.get_status():
+                        tp_count_dict[g.STATUS] += 1
+                    else:
+                        fn_count_dict[g.STATUS] += 1
+
+                    # Each attribute is a POI
+                    predicted_attribs = predicted_event.attributes_list
+                    gold_attributes = gold_event.dict_of_attribs
+
+                    for g_attrib in gold_attributes.values():
+                        if g_attrib.type in g.ATTRIBUTE_TYPES:
+                            foundMatchingAttribs = False
+                            for p_attrib in predicted_attribs:
+                                if p_attrib.type == g_attrib.type and g_attrib.type != "Status":
+                                    foundMatchingAttribs = True
+                                    exact,partial = score(int(p_attrib.span_begin), int(p_attrib.span_end), int(g_attrib.span_begin), int(g_attrib.span_end))
+                                    if exact ==1:
+                                        tp_count_dict[p_attrib.type] +=1
+                                    else:
+                                        fp_count_dict[p_attrib.type] +=1
+                            if not foundMatchingAttribs and g_attrib.type != g.STATUS:
+                                fn_count_dict[g_attrib.type] += 1
+            if not found_type:
+                fn_count_dict = give_1_false_to_every_poi(gold_event, fn_count_dict, "gold")
+
+    for pred_event in predicted_events:
+        found_type = False
+        for gold_event in gold_events:
+            if pred_event.type == gold_event.type:  # these two events should be compared
+                # Type is a POI
+                found_type = True
+        if not found_type:
+            fp_count_dict =give_1_false_to_every_poi(pred_event, fp_count_dict, "pred")
 
 
-    pass
+    return fp_count_dict, tp_count_dict, fn_count_dict
 
 
 def evaluate(info):
@@ -264,6 +326,8 @@ def evaluate(info):
     total = 0
     same_type = 0
     all_count = 0
+
+
 
     for sent_index, sent_obj in enumerate(info.sent_objs):
         sent_file.write(str(sent_index) + ": " + sent_obj.sentence + "\n")
@@ -278,7 +342,7 @@ def evaluate(info):
             predicted_events = info.predicted_event_objs_by_index[sent_index]
 
         # Take predicted events and gold events and evaluate them using TP/FP/FN
-        result_str = evaluate_tp_fp_fn(predicted_events, gold_events)
+        fp,tp,fn = evaluate_tp_fp_fn(predicted_events, gold_events)
 
 
         # Print predicted events

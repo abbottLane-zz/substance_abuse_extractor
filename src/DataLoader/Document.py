@@ -22,8 +22,8 @@ class Document:
             if sentence != "\n":
 
                 #debug: This is where you put text from a doc you want to check on
-                # if "Negative for smoking and drinking" in sentence:
-                #     print("DOCUMENT TO CHECK: " + self.get_id())
+                if "two packs a day with combined cigarettes and cigars" in sentence:
+                     dghd=1
 
                 sentence = sentence.rstrip()
                 start_idx = current_length
@@ -41,9 +41,9 @@ class Document:
         for entity in entities:
             entity_assigned = False
             for sent in self.sentence_obj_list:
-                # if entity_assigned == True:
-                #     entity_assigned=False
-                #     break
+                if entity_assigned == True: # WILL fIX THIS
+                    entity_assigned=False # WILL fIX THIS
+                    break # WILL fIX THIS
 
                 begin_indexes_of_sent_entities = entity.get_entity_begin_idxs()
                 for idx in begin_indexes_of_sent_entities:

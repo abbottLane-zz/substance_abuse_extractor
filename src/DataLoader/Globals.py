@@ -39,3 +39,6 @@ HAS_GRAM = "HAS_GRAM_"
 ATTRIB_TYPE = "ATTRIB_TYPE_"
 EVENT_TYPE = "EVENT_TYPE_"
 SURR_WORD = "SURR_WORD_"
+
+#POI types represent the points of information important for evaluation of TP/FP/etc
+POI_TYPE = {ALCOHOL, DRUGS, TOBACCO, STATUS,}.union(ATTRIBUTE_TYPES)
