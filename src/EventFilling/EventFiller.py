@@ -230,40 +230,36 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
         attrib_feature_dict[post_feat] = True
 
 
-def give_1_false_to_every_poi(event, f_count_dict, flag):
+def give_1_false_to_every_poi(event, f_count_dict, flag, log_out):
 
     if flag == "gold":
         f_count_dict[event.type] +=1
+        log_out.write("No match: " +event.type )
         f_count_dict[g.STATUS] +=1
+        log_out.write("No match: " + g.STATUS)
 
         for attrib in event.dict_of_attribs.values():
             if attrib.type in g.ATTRIBUTE_TYPES and attrib.type!= g.STATUS:
                 f_count_dict[attrib.type] +=1
+                log_out.write("No match: " + attrib.type)
 
         return f_count_dict
     else:
         f_count_dict[event.type] += 1
+        log_out.write("No match: " + event.type)
         f_count_dict[g.STATUS] += 1
+        log_out.write("No match: " + g.STATUS)
 
         for attrib in event.attributes_list:
             if attrib.type in g.ATTRIBUTE_TYPES and attrib.type != g.STATUS:
                 f_count_dict[attrib.type] += 1
+                log_out.write("No match: " + attrib.type)
 
         return f_count_dict
 
 
 
-def evaluate_tp_fp_fn(predicted_events, gold_events):
-    POI_TYPES=g.POI_TYPE
-
-    # initialise dict counts
-    tp_count_dict = dict()
-    fp_count_dict = dict()
-    fn_count_dict = dict()
-    for t in POI_TYPES:
-        tp_count_dict[t]= 0
-        fp_count_dict[t] = 0
-        fn_count_dict[t] = 0
+def evaluate_tp_fp_fn(predicted_events, gold_events, tp_count_dict,fp_count_dict,fn_count_dict, tp_out, fn_out, fp_out):
 
     # Iterate over Gold events to capture TP FN
     for gold_event in gold_events:
@@ -276,12 +272,15 @@ def evaluate_tp_fp_fn(predicted_events, gold_events):
                     found_type=True
                     type = predicted_event.type
                     tp_count_dict[type]+=1
+                    tp_out.write("Found type: [" + str(type) + "] should be: ["+gold_event.type +"]\n")
 
                     # Status is another POI
                     if predicted_event.status == gold_event.get_status():
                         tp_count_dict[g.STATUS] += 1
+                        tp_out.write("Found status: [" + predicted_event.status + "] should be: ["+gold_event.get_status()+"]\n")
                     else:
                         fn_count_dict[g.STATUS] += 1
+                        fn_out.write("Found status: [" + predicted_event.status + "] should be: [" + gold_event.get_status() + "]\n")
 
                     # Each attribute is a POI
                     predicted_attribs = predicted_event.attributes_list
@@ -296,12 +295,19 @@ def evaluate_tp_fp_fn(predicted_events, gold_events):
                                     exact,partial = score(int(p_attrib.span_begin), int(p_attrib.span_end), int(g_attrib.span_begin), int(g_attrib.span_end))
                                     if exact ==1:
                                         tp_count_dict[p_attrib.type] +=1
+                                        tp_out.write("Span ["+str(p_attrib.span_begin)
+                                                     + ", "+str(p_attrib.span_end)+"] == ["+str(g_attrib.span_begin)
+                                                     + ", "+str(g_attrib.span_end)+"]\n")
                                     else:
                                         fp_count_dict[p_attrib.type] +=1
+                                        fp_out.write("Span [" + str(p_attrib.span_begin) + ", "
+                                                     + str(p_attrib.span_end) + "] != [" + str(g_attrib.span_begin)
+                                                     + ", " + str(g_attrib.span_end) + "]\n")
                             if not foundMatchingAttribs and g_attrib.type != g.STATUS:
                                 fn_count_dict[g_attrib.type] += 1
+                                fn_out.write("Found no matching Attrib: "+ g_attrib.type)
             if not found_type:
-                fn_count_dict = give_1_false_to_every_poi(gold_event, fn_count_dict, "gold")
+                fn_count_dict = give_1_false_to_every_poi(gold_event, fn_count_dict, "gold", fn_out)
 
     for pred_event in predicted_events:
         found_type = False
@@ -310,10 +316,20 @@ def evaluate_tp_fp_fn(predicted_events, gold_events):
                 # Type is a POI
                 found_type = True
         if not found_type:
-            fp_count_dict =give_1_false_to_every_poi(pred_event, fp_count_dict, "pred")
+            fp_count_dict =give_1_false_to_every_poi(pred_event, fp_count_dict, "pred",  fp_out)
 
 
-    return fp_count_dict, tp_count_dict, fn_count_dict
+def print_precision_recall(tp_count_dict, fp_count_dict, fn_count_dict):
+    fp_count = sum([x for x in fp_count_dict.values()])
+    tp_count = sum([x for x in tp_count_dict.values()])
+    fn_count = sum([x for x in fn_count_dict.values()])
+
+    precision = tp_count / float(tp_count+ fp_count)
+    recall = tp_count / float(tp_count+ fn_count)
+
+    print("PRECISION:", precision)
+    print("RECALL:", recall)
+    pass
 
 
 def evaluate(info):
@@ -327,6 +343,20 @@ def evaluate(info):
     same_type = 0
     all_count = 0
 
+    # initialise dict counts
+    tp_count_dict = dict()
+    fp_count_dict = dict()
+    fn_count_dict = dict()
+    POI_TYPES = g.POI_TYPE
+    for t in POI_TYPES:
+        tp_count_dict[t] = 0
+        fp_count_dict[t] = 0
+        fn_count_dict[t] = 0
+
+    # initialize log files
+    tp_out = open("tp_out.log", "w")
+    fn_out = open("fn_out.log", "w")
+    fp_out = open("fp_out.log", "w")
 
 
     for sent_index, sent_obj in enumerate(info.sent_objs):
@@ -342,7 +372,7 @@ def evaluate(info):
             predicted_events = info.predicted_event_objs_by_index[sent_index]
 
         # Take predicted events and gold events and evaluate them using TP/FP/FN
-        fp,tp,fn = evaluate_tp_fp_fn(predicted_events, gold_events)
+        evaluate_tp_fp_fn(predicted_events, gold_events, tp_count_dict, fp_count_dict, fn_count_dict, tp_out, fn_out, fp_out)
 
 
         # Print predicted events
@@ -387,6 +417,8 @@ def evaluate(info):
         print(same_type)
         print(all_count)
 
+
+    print_precision_recall(tp_count_dict,fp_count_dict,fn_count_dict)
 
 def compare_attributes(gold_attribs, pred_attribs, outfile):
     exact = 0

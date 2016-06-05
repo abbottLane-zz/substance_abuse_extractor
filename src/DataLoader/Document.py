@@ -22,8 +22,8 @@ class Document:
             if sentence != "\n":
 
                 #debug: This is where you put text from a doc you want to check on
-                if "two packs a day with combined cigarettes and cigars" in sentence:
-                     dghd=1
+                # if "two packs a day with combined cigarettes and cigars" in sentence:
+                #      dghd=1
 
                 sentence = sentence.rstrip()
                 start_idx = current_length
