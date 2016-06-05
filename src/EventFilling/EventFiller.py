@@ -38,30 +38,34 @@ def get_attribs_from_sentence(sent_obj):
         for index, tuple in enumerate(sent_attrib_predictions[attrib_type]):
             gram = tuple[0]
             prediction = tuple[1]
-            span_start = tuple[2] + sent_obj.begin_idx
-            span_end = tuple[3] + sent_obj.begin_idx
+            span_start_local = tuple[2]  # + sent_obj.begin_idx      # add sent index to match gold labels
+            span_end_local = tuple[3]  # + sent_obj.begin_idx
 
             if prediction == attrib_type:
                 # Create new attrib if at the beginning of a new attrib
                 if not in_attrib:
                     attribs_gram_lists.append([])
-                    start_indicies.append(span_start)
-                    end_indicies.append(span_end)
+                    start_indicies.append(span_start_local)
+                    end_indicies.append(span_end_local)
                     types.append(attrib_type)
                     in_attrib = True
                 else:
                     # Keep updating the end index
-                    end_indicies[-1] = span_end
+                    end_indicies[-1] = span_end_local
 
                 # Add to current attrib until attrib label changes
                 attribs_gram_lists[-1].append(gram)
             else:
                 in_attrib = False
 
-    for gram_list, start_index, end_index, type in zip(attribs_gram_lists, start_indicies, end_indicies, types):
+    for gram_list, start_index_loc, end_index_loc, type in zip(attribs_gram_lists, start_indicies, end_indicies, types):
+        # Create a tag
         tag = "T" + str(tag_index)
         tag_index += 1
-        text, end_index = recover_text_from_span(sent_obj, start_index, end_index)
+
+        # readjust indices to grab local text
+        text, start_index, end_index = recover_text_from_span(sent_obj, start_index_loc, end_index_loc)
+
         attrib = TAttrib(tag, type, start_index, end_index, text, None)
         attributes.append(attrib)
 
@@ -104,18 +108,21 @@ def assign_attribs_to_events(sent_obj, events, attribs, attrib_classifier, featu
             events[0].attributes_list.append(attrib)
 
 
-def recover_text_from_span(sent_obj, start_index, end_index):
-    start = start_index  # - sent_obj.begin_idx
-    end = end_index      # - sent_obj.begin_idx
-    text = sent_obj.sentence[start:end]
+def recover_text_from_span(sent_obj, local_start_index, local_end_index):
+    # start = local_start_index - sent_obj.begin_idx
+    # end = local_end_index - sent_obj.begin_idx
+    text = sent_obj.sentence[local_start_index:local_end_index]
 
     # Strip off any ending punctuation
     has_ending_punc = re.match(r"(.*)[\.,?!]$", text)
     if has_ending_punc:
         text = has_ending_punc.group(1)
-        end_index -= 1
+        local_end_index -= 1
 
-    return text, end_index
+    full_start_index = local_start_index + sent_obj.begin_idx
+    full_end_index = local_end_index + sent_obj.begin_idx
+
+    return text, full_start_index, full_end_index
 
 
 def train_event_filler(training_doc_objs):
@@ -375,7 +382,7 @@ def evaluate(info):
         # CREATE DEBUGGING LOGS
         # Print predicted events
         for pred_event in predicted_events:
-            pred_file.write("\n\nEvent: " + pred_event.type + "\n")
+            pred_file.write("\nEvent: " + pred_event.type + "\n")
             pred_file.write("Status: " + pred_event.status + "\n")
             for attrib in pred_event.attributes_list:
                 pred_file.write(attrib.type + " " + str(attrib.span_begin) + " " + str(attrib.span_end) + " " + attrib.text + "\n")
