@@ -234,26 +234,26 @@ def give_1_false_to_every_poi(event, f_count_dict, flag, log_out):
 
     if flag == "gold":
         f_count_dict[event.type] +=1
-        log_out.write("No match: " +event.type )
+        log_out.write("No match: " +event.type +"\n")
         f_count_dict[g.STATUS] +=1
-        log_out.write("No match: " + g.STATUS)
+        log_out.write("No match: " + g.STATUS+"\n")
 
         for attrib in event.dict_of_attribs.values():
             if attrib.type in g.ATTRIBUTE_TYPES and attrib.type!= g.STATUS:
                 f_count_dict[attrib.type] +=1
-                log_out.write("No match: " + attrib.type)
+                log_out.write("No match: " + attrib.type+"\n")
 
         return f_count_dict
     else:
         f_count_dict[event.type] += 1
-        log_out.write("No match: " + event.type)
+        log_out.write("No match: " + event.type + "\n")
         f_count_dict[g.STATUS] += 1
-        log_out.write("No match: " + g.STATUS)
+        log_out.write("No match: " + g.STATUS+"\n")
 
         for attrib in event.attributes_list:
             if attrib.type in g.ATTRIBUTE_TYPES and attrib.type != g.STATUS:
                 f_count_dict[attrib.type] += 1
-                log_out.write("No match: " + attrib.type)
+                log_out.write("No match: " + attrib.type+"\n")
 
         return f_count_dict
 
@@ -305,7 +305,7 @@ def evaluate_tp_fp_fn(predicted_events, gold_events, tp_count_dict,fp_count_dict
                                                      + ", " + str(g_attrib.span_end) + "]\n")
                             if not foundMatchingAttribs and g_attrib.type != g.STATUS:
                                 fn_count_dict[g_attrib.type] += 1
-                                fn_out.write("Found no matching Attrib: "+ g_attrib.type)
+                                fn_out.write("Found no matching Attrib: "+ g_attrib.type + "\n")
             if not found_type:
                 fn_count_dict = give_1_false_to_every_poi(gold_event, fn_count_dict, "gold", fn_out)
 
