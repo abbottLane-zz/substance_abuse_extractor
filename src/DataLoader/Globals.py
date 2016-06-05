@@ -40,5 +40,5 @@ ATTRIB_TYPE = "ATTRIB_TYPE_"
 EVENT_TYPE = "EVENT_TYPE_"
 SURR_WORD = "SURR_WORD_"
 
-#POI types represent the points of information important for evaluation of TP/FP/etc
-POI_TYPE = {ALCOHOL, DRUGS, TOBACCO, STATUS,}.union(ATTRIBUTE_TYPES)
+# POI types represent the points of information important for evaluation of TP/FP/etc
+POI_TYPES = {ALCOHOL, DRUGS, TOBACCO}.union(ATTRIBUTE_TYPES)

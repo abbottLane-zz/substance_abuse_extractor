@@ -347,8 +347,7 @@ def evaluate(info):
     tp_count_dict = dict()
     fp_count_dict = dict()
     fn_count_dict = dict()
-    POI_TYPES = g.POI_TYPE
-    for t in POI_TYPES:
+    for t in g.POI_TYPES:
         tp_count_dict[t] = 0
         fp_count_dict[t] = 0
         fn_count_dict[t] = 0
@@ -357,7 +356,6 @@ def evaluate(info):
     tp_out = open("tp_out.log", "w")
     fn_out = open("fn_out.log", "w")
     fp_out = open("fp_out.log", "w")
-
 
     for sent_index, sent_obj in enumerate(info.sent_objs):
         sent_file.write(str(sent_index) + ": " + sent_obj.sentence + "\n")
@@ -374,7 +372,7 @@ def evaluate(info):
         # Take predicted events and gold events and evaluate them using TP/FP/FN
         evaluate_tp_fp_fn(predicted_events, gold_events, tp_count_dict, fp_count_dict, fn_count_dict, tp_out, fn_out, fp_out)
 
-
+        # CREATE DEBUGGING LOGS
         # Print predicted events
         for pred_event in predicted_events:
             pred_file.write("\n\nEvent: " + pred_event.type + "\n")
