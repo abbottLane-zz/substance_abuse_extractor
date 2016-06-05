@@ -255,7 +255,7 @@ def evaluate(info):
 
         # Print predicted events
         for pred_event in predicted_events:
-            pred_file.write("\n\nEvent: " + pred_event.type + "\n")
+            pred_file.write("\nEvent: " + pred_event.type + "\n")
             pred_file.write("Status: " + pred_event.status + "\n")
             for attrib in pred_event.attributes_list:
                 pred_file.write(attrib.type + " " + str(attrib.span_begin) + " " + str(attrib.span_end) + " " + attrib.text + "\n")
