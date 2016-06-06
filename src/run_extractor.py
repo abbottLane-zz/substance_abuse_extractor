@@ -28,7 +28,7 @@ def get_test_fold(folds_data, test_fold_num):
 ##################################
 
 # load folds data
-TEST_FOLD = 1
+TEST_FOLD = 5
 with open("../Data/folds.out") as file:
    folds_data = file.readlines()
 test_set = get_test_fold(folds_data, TEST_FOLD)

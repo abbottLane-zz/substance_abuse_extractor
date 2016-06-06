@@ -3,6 +3,7 @@ from DataLoader import Configuration as c
 from FeatureExtractor.FeatureExtractor import FeatureExtractor
 from DataModels.TAttrib import TAttrib
 from Classification import Classifier
+from EventFilling import CSDI
 from sklearn.svm import LinearSVC
 import numpy as np
 import re
@@ -237,132 +238,27 @@ def __add_surrounding_words(attrib_feature_dict, sent_obj, attrib):
         attrib_feature_dict[post_feat] = True
 
 
-def give_1_false_to_every_poi(event, f_count_dict, flag, log_out):
-
-    if flag == "gold":
-        f_count_dict[event.type] +=1
-        log_out.write("No match: " +event.type +"\n")
-        f_count_dict[g.STATUS] +=1
-        log_out.write("No match: " + g.STATUS+"\n")
-
-        for attrib in event.dict_of_attribs.values():
-            if attrib.type in g.ATTRIBUTE_TYPES and attrib.type!= g.STATUS:
-                f_count_dict[attrib.type] +=1
-                log_out.write("No match: " + attrib.type+"\n")
-
-        return f_count_dict
-    else:
-        f_count_dict[event.type] += 1
-        log_out.write("No match: " + event.type + "\n")
-        f_count_dict[g.STATUS] += 1
-        log_out.write("No match: " + g.STATUS+"\n")
-
-        for attrib in event.attributes_list:
-            if attrib.type in g.ATTRIBUTE_TYPES and attrib.type != g.STATUS:
-                f_count_dict[attrib.type] += 1
-                log_out.write("No match: " + attrib.type+"\n")
-
-        return f_count_dict
-
-
-
-def evaluate_tp_fp_fn(predicted_events, gold_events, tp_count_dict,fp_count_dict,fn_count_dict, tp_out, fn_out, fp_out):
-
-    # Iterate over Gold events to capture TP FN
-    for gold_event in gold_events:
-        if gold_event.type in g.SPECIFIC_CLASSIFIER_TYPES:
-            found_type= False
-            for predicted_event in predicted_events:
-                if predicted_event.type == gold_event.type: #these two events should be compared
-
-                    # Type is a POI
-                    found_type=True
-                    type = predicted_event.type
-                    tp_count_dict[type]+=1
-                    tp_out.write("Found type: [" + str(type) + "] should be: ["+gold_event.type +"]\n")
-
-                    # Status is another POI
-                    if predicted_event.status == gold_event.get_status():
-                        tp_count_dict[g.STATUS] += 1
-                        tp_out.write("Found status: [" + predicted_event.status + "] should be: ["+gold_event.get_status()+"]\n")
-                    else:
-                        fn_count_dict[g.STATUS] += 1
-                        fn_out.write("Found status: [" + predicted_event.status + "] should be: [" + gold_event.get_status() + "]\n")
-
-                    # Each attribute is a POI
-                    predicted_attribs = predicted_event.attributes_list
-                    gold_attributes = gold_event.dict_of_attribs
-
-                    for g_attrib in gold_attributes.values():
-                        if g_attrib.type in g.ATTRIBUTE_TYPES:
-                            foundMatchingAttribs = False
-                            for p_attrib in predicted_attribs:
-                                if p_attrib.type == g_attrib.type and g_attrib.type != "Status":
-                                    foundMatchingAttribs = True
-                                    exact,partial = score(int(p_attrib.span_begin), int(p_attrib.span_end), int(g_attrib.span_begin), int(g_attrib.span_end))
-                                    if exact ==1:
-                                        tp_count_dict[p_attrib.type] +=1
-                                        tp_out.write("Span ["+str(p_attrib.span_begin)
-                                                     + ", "+str(p_attrib.span_end)+"] == ["+str(g_attrib.span_begin)
-                                                     + ", "+str(g_attrib.span_end)+"]\n")
-                                    else:
-                                        fp_count_dict[p_attrib.type] +=1
-                                        fp_out.write("Span [" + str(p_attrib.span_begin) + ", "
-                                                     + str(p_attrib.span_end) + "] != [" + str(g_attrib.span_begin)
-                                                     + ", " + str(g_attrib.span_end) + "]\n")
-                            if not foundMatchingAttribs and g_attrib.type != g.STATUS:
-                                fn_count_dict[g_attrib.type] += 1
-                                fn_out.write("Found no matching Attrib: "+ g_attrib.type + "\n")
-            if not found_type:
-                fn_count_dict = give_1_false_to_every_poi(gold_event, fn_count_dict, "gold", fn_out)
-
-    for pred_event in predicted_events:
-        found_type = False
-        for gold_event in gold_events:
-            if pred_event.type == gold_event.type:  # these two events should be compared
-                # Type is a POI
-                found_type = True
-        if not found_type:
-            fp_count_dict =give_1_false_to_every_poi(pred_event, fp_count_dict, "pred",  fp_out)
-
-
-def print_precision_recall(tp_count_dict, fp_count_dict, fn_count_dict):
-    fp_count = sum([x for x in fp_count_dict.values()])
-    tp_count = sum([x for x in tp_count_dict.values()])
-    fn_count = sum([x for x in fn_count_dict.values()])
-
-    precision = tp_count / float(tp_count+ fp_count)
-    recall = tp_count / float(tp_count+ fn_count)
-
-    print("PRECISION:", precision)
-    print("RECALL:", recall)
-    pass
-
-
 def evaluate(info):
     outfile = open("EventFillerResults.txt", "w")
     gold_file = open("GoldEventsAndAttributes", "w")
     pred_file = open("PredEventsAndAttributes", "w")
     sent_file = open("Sentences", "w")
-    exact_all = 0
-    partial_all = 0
-    total = 0
-    same_type = 0
-    all_count = 0
 
     # initialise dict counts
-    tp_count_dict = dict()
-    fp_count_dict = dict()
-    fn_count_dict = dict()
+    correct_counts = {}
+    sub_counts = {}
+    del_counts = {}
+    insert_counts = {}
     for t in g.POI_TYPES:
-        tp_count_dict[t] = 0
-        fp_count_dict[t] = 0
-        fn_count_dict[t] = 0
+        correct_counts[t] = 0
+        sub_counts[t] = 0
+        del_counts[t] = 0
+        insert_counts[t] = 0
 
     # initialize log files
-    tp_out = open("tp_out.log", "w")
-    fn_out = open("fn_out.log", "w")
-    fp_out = open("fp_out.log", "w")
+    events_file = open("event.log", "w")
+    status_file = open("status.log", "w")
+    attrib_file = open("attrib.log", "w")
 
     for sent_index, sent_obj in enumerate(info.sent_objs):
         sent_file.write(str(sent_index) + ": " + sent_obj.sentence + "\n")
@@ -370,14 +266,21 @@ def evaluate(info):
         gold_file.write(str(sent_obj.begin_idx) + " " + str(sent_obj.end_idx) + "\n")
         pred_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
         pred_file.write(str(sent_obj.begin_idx) + " " + str(sent_obj.end_idx) + "\n")
+        events_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
+        events_file.write(str(sent_obj.begin_idx) + " " + str(sent_obj.end_idx) + "\n")
+        status_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
+        status_file.write(str(sent_obj.begin_idx) + " " + str(sent_obj.end_idx) + "\n")
+        attrib_file.write("\n\nSent " + str(sent_index) + " ---------------------\n")
+        attrib_file.write(str(sent_obj.begin_idx) + " " + str(sent_obj.end_idx) + "\n")
 
         gold_events = sent_obj.set_entities
         predicted_events = []
         if sent_index in info.predicted_event_objs_by_index:
             predicted_events = info.predicted_event_objs_by_index[sent_index]
 
-        # Take predicted events and gold events and evaluate them using TP/FP/FN
-        evaluate_tp_fp_fn(predicted_events, gold_events, tp_count_dict, fp_count_dict, fn_count_dict, tp_out, fn_out, fp_out)
+        # Compare predicted and gold events, find precision and recall
+        CSDI.evaluate_csdi(predicted_events, gold_events, correct_counts, sub_counts, del_counts, insert_counts,
+                           events_file, status_file, attrib_file)
 
         # CREATE DEBUGGING LOGS
         # Print predicted events
@@ -394,8 +297,6 @@ def evaluate(info):
                 # total
                 for a in gold_event.dict_of_attribs:
                     attrib = gold_event.dict_of_attribs[a]
-                    if attrib.type not in g.SPECIFIC_CLASSIFIER_TYPES and attrib.type != g.STATUS:
-                        total += 1
 
                     if attrib.type == g.STATUS:
                         gold_file.write(g.STATUS + " " + attrib.a_attrib.status + "\n")
@@ -408,22 +309,9 @@ def evaluate(info):
                         exact, partial, count, same = compare_attributes(gold_event.dict_of_attribs, pred_event.attributes_list, outfile)
 
                         outfile.write(gold_event.type + " " + str(exact) + " " + str(partial))
-                        exact_all += exact
-                        partial_all += partial
-                        all_count += count
-                        same_type += same
 
-    if total != 0:
-        print("Exact accuracy: " + str(exact_all/total))
-        print("Partial accuracy: " + str(partial_all/total))
-        print(exact_all)
-        print(partial_all)
-        print(total)
-        print(same_type)
-        print(all_count)
+    CSDI.calculate_precision_recall(correct_counts, sub_counts, del_counts, insert_counts)
 
-
-    print_precision_recall(tp_count_dict,fp_count_dict,fn_count_dict)
 
 def compare_attributes(gold_attribs, pred_attribs, outfile):
     exact = 0
@@ -438,21 +326,21 @@ def compare_attributes(gold_attribs, pred_attribs, outfile):
         for pred_attrib in pred_attribs:
             if gold_attrib.type == pred_attrib.type:
                 same += 1
-                exact, partial = score(gold_attrib.span_begin, gold_attrib.span_end,
-                                       pred_attrib.span_begin, pred_attrib.span_end)
+                exact, partial = compare_spans(gold_attrib.span_begin, gold_attrib.span_end,
+                                               pred_attrib.span_begin, pred_attrib.span_end)
                 outfile.write("pred -" + str(exact) + str(partial) + "\n")
 
     return exact, partial, count, same
 
 
-def score(gold_begin, gold_end, pred_begin, pred_end):
-    exact = 0
-    partial = 0
+def compare_spans(gold_begin, gold_end, pred_begin, pred_end):
+    exact = False
+    partial = False
 
     if int(gold_begin) == pred_begin and int(gold_end) == pred_end:
-        exact += 1
-        partial += 1
+        exact = True
+        partial = True
     elif int(gold_end) >= pred_begin and int(gold_begin) <= pred_end:
-        partial += 1
+        partial = True
 
     return exact, partial

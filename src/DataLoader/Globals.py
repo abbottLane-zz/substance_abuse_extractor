@@ -32,7 +32,7 @@ TYPE = "Type"
 AMOUNT = "Amount"
 FREQ = "Frequency"
 HISTORY = "History"
-ATTRIBUTE_TYPES = {STATUS, TEMPORAL, METHOD, TYPE, AMOUNT, FREQ, HISTORY}
+ATTRIBUTE_TYPES = {TEMPORAL, METHOD, TYPE, AMOUNT, FREQ, HISTORY}
 
 # Event Filler Features
 HAS_GRAM = "HAS_GRAM_"
@@ -41,4 +41,10 @@ EVENT_TYPE = "EVENT_TYPE_"
 SURR_WORD = "SURR_WORD_"
 
 # POI types represent the points of information important for evaluation of TP/FP/etc
-POI_TYPES = {ALCOHOL, DRUGS, TOBACCO}.union(ATTRIBUTE_TYPES)
+POI_TYPES = {ALCOHOL, DRUGS, TOBACCO, STATUS}.union(ATTRIBUTE_TYPES)
+
+# IE evaluation components
+CORRECT = "CORRECT"
+SUB = "SUBSTITUTION"
+DEL = "DELETION"
+INSERT = "INSERTION"
