@@ -28,7 +28,7 @@ def get_test_fold(folds_data, test_fold_num):
 ##################################
 
 # load folds data
-TEST_FOLD = 1
+TEST_FOLD = 5
 with open("../Data/folds.out") as file:
    folds_data = file.readlines()
 test_set = get_test_fold(folds_data, TEST_FOLD)
@@ -45,6 +45,8 @@ training_doc_objs = dict()
 testing_doc_objs = dict()
 
 for key in training_documents.keys():
+    if "387" in key:
+        stop=0
     document = training_documents[key]
     annotation = annotations[key]
     document.set_annotation(annotation)
@@ -141,6 +143,11 @@ test = 0
 #           - PredictedEvent is an object carrying all the info about the events we predicted for, and their status
 
 print(status_classification_info)
+
+# ## DEBUG ##
+# for sentobj in status_classification_info.sent_objs:
+#     if sentobj.sentence == "PERSONAL / SOCIAL HISTORY: Tobacc":
+#         pause = 0
 
 # Train
 attrib_classifier, feature_map = EventFiller.train_event_filler(training_doc_objs)
